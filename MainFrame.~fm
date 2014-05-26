@@ -1,0 +1,29 @@
+object mainFrame: TFGUIFormular
+  Left = 0
+  Top = 32
+  BorderIcons = []
+  Caption = 'MainFrame'
+  ClientHeight = 561
+  ClientWidth = 784
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = True
+  Position = poDesigned
+  ShowHint = True
+  Visible = True
+  WindowState = wsMaximized
+  OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
+  OnResize = FormResize
+  FrameType = 5
+  Resizable = False
+  Undecorated = False
+  Background = clBtnFace
+  PixelsPerInch = 96
+  TextHeight = 13
+end
