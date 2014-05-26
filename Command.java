@@ -1,5 +1,6 @@
 public abstract class Command {
   
+//the superclass of all commands
   protected int programmCounterLine;
   protected int machineCycles;
   protected int parameter1;
