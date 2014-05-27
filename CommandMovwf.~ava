@@ -8,17 +8,19 @@ public class CommandMovwf extends Command {
   
   public int executeCommand() {
     
+    int actualValue = wRegister.getValue();
+    
     if (parameter1 == 0){ // indirekte Addresierung
       
-      dataStorage.setValue(getBankOffset() + 4, wRegister.getValue());
+      dataStorage.setValue(getBankOffset() + 4, actualValue);
       
-    } else {
+    } else { // direkte Adressierung
       
-      dataStorage.setValue(getBankOffset() + parameter1, wRegister.getValue());
+      dataStorage.setValue(getBankOffset() + parameter1, actualValue);
       
     } 
     
-    return 1;
+    return -1;
     
   }
 }

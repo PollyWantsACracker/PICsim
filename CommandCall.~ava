@@ -11,7 +11,7 @@ public class CommandCall extends Command {
   
   public int executeCommand() {
     
-    stack.addAddress(programmCounterLine);
+    stack.addAddress(programmCounterLine + 1);
     return parameter1;
     
   }

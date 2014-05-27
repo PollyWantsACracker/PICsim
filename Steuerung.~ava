@@ -10,11 +10,19 @@ public class Steuerung {
   
   public Steuerung() {
     
-    mainFrame = new MainFrame("PIC16F84 Simulator", this);
-    parser = new Parser(this);
     dataStorage = new DataStorage();
+    parser = new Parser(this);
     wRegister = new WRegister();
-    stack = new Stack(); 
+    stack = new Stack();
+    mainFrame = new MainFrame("PIC16F84 Simulator", this);
+    
+    
+  }
+  
+  public void execution() {
+    
+    
+    
     
   }
   
@@ -25,19 +33,19 @@ public class Steuerung {
   }
   
   public DataStorage getDataStorage() {
-  
+    
     return dataStorage;
     
   }
   
   public WRegister getWRegister() {
-  
+    
     return wRegister;
     
   }
   
   public Stack getStack() {
-  
+    
     return stack;
     
   }  

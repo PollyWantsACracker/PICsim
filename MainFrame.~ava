@@ -120,10 +120,10 @@ public class MainFrame extends JFrame {
     cp.add(jScrollPaneSourceCode);
     
     jPanelDataStorage = new JPanel();
-    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
+    jPanelDataStorage.setPreferredSize(new Dimension(525, 520)); // 525
     
     jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 400, 115, 125);
+    jPanelSteuerpult.setBounds(0, 315, 115, 125);
     jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
     cp.add(jPanelSteuerpult);
     
@@ -188,7 +188,7 @@ public class MainFrame extends JFrame {
     
     for (int i = 0; i < 17; i++ ) {
       
-      for (int j = 0; j < 18; j++) {
+      for (int j = 0; j < 17; j++) {
         
         if (i == 0 && j == 0) { // 1. Platzhalter links oben
           
@@ -196,7 +196,7 @@ public class MainFrame extends JFrame {
           jLabelDataStorage[j].setPreferredSize(new Dimension(25, 25));
           jPanelDataStorage.add(jLabelDataStorage[j]);
           
-        } else if(i == 0 && j != 0 && j != 17) { // 1. Zeile Beschriftung
+        } else if (i == 0 && j != 0) { // 1. Zeile Beschriftung
           
           jLabelDataStorage[j] = new JLabel();
           jLabelDataStorage[j].setPreferredSize(new Dimension(25, 25));
@@ -204,28 +204,22 @@ public class MainFrame extends JFrame {
           jLabelDataStorage[j].setHorizontalAlignment(SwingConstants.CENTER);
           jPanelDataStorage.add(jLabelDataStorage[j]);
           
-        } else if (i == 0 && j == 17) { // 2. Platzhalter rechts oben
-          
-          jLabelDataStorage[j] = new JLabel();
-          jLabelDataStorage[j].setPreferredSize(new Dimension(25, 25));
-          jPanelDataStorage.add(jLabelDataStorage[j]);
-          
         } else if (i != 0 && j == 0) { // 1. Spalte Beschriftung
           
           jLabelDataStorage[i + 17] = new JLabel();
-          jLabelDataStorage[j + 17].setPreferredSize(new Dimension(25, 25));
-          jLabelDataStorage[j + 17].setText(Integer.toHexString(i - 1) + "x");
-          jLabelDataStorage[j + 17].setHorizontalAlignment(SwingConstants.CENTER);
-          jPanelDataStorage.add(jLabelDataStorage[j + 17]);
+          jLabelDataStorage[i + 17].setPreferredSize(new Dimension(25, 25));
+          jLabelDataStorage[i + 17].setText(Integer.toHexString(i - 1) + "x");
+          jLabelDataStorage[i + 17].setHorizontalAlignment(SwingConstants.CENTER);
+          jPanelDataStorage.add(jLabelDataStorage[i + 17]);
           
-        } else if (i != 0 && j != 0 && j != 17) { // Alle Textfelder (DataStorage)
+        } else if (i != 0 && j != 0) { // Alle Textfelder (DataStorage)
           
-          jTextFieldDataStorage[(i - 1) * 15 + (j - 1)] = new JTextField();
-          jTextFieldDataStorage[(i - 1) * 15 + (j - 1)].setPreferredSize(new Dimension(25, 25));
-          jTextFieldDataStorage[(i - 1) * 15 + (j - 1)].setText("00");
-          jTextFieldDataStorage[(i - 1) * 15 + (j - 1)].setHorizontalAlignment(SwingConstants.CENTER);
-          jTextFieldDataStorage[(i - 1) * 15 + (j - 1)].setEditable(false);
-          jPanelDataStorage.add(jTextFieldDataStorage[(i - 1) * 15 + (j - 1)]);
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)] = new JTextField();
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setPreferredSize(new Dimension(25, 25));
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setText(Integer.toHexString(steuerung.getDataStorage().getValue((i - 1) * 16 + (j - 1))));
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setHorizontalAlignment(SwingConstants.CENTER);
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setEditable(true);
+          jPanelDataStorage.add(jTextFieldDataStorage[(i - 1) * 16 + (j - 1)]);
           
         } else if (i != 0 && j == 17) { // Platzhalter jeweils am ende einer Zeile
           
@@ -233,7 +227,7 @@ public class MainFrame extends JFrame {
           jLabelDataStorage[j].setPreferredSize(new Dimension(25, 25));
           jPanelDataStorage.add(jLabelDataStorage[j]);
           
-        } 
+        }
       }
     }
   }
@@ -242,8 +236,8 @@ public class MainFrame extends JFrame {
     
     for (int i = 0;i<256;i++) {
       
-      jTextFieldDataStorage[i].setText(String.valueOf(steuerung.getDataStorage().getValue(i)));
-          
+      jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
+      
     } 
   }
   
@@ -345,19 +339,23 @@ public class MainFrame extends JFrame {
           
           if( showRow == false ) {  
             
+            cellLabel.setForeground(Color.BLACK);
             cellLabel.setBackground( Color.WHITE );
             
           }  
           
           else {  
             
-            cellLabel.setBackground( Color.YELLOW );  
+            cellLabel.setForeground(Color.WHITE);
+            cellLabel.setBackground( Color.RED );  
+            
           }  
           
-          repaint();
+          
           return cellLabel;  
         }  
         
+        repaint();
         return cell;  
       }  
       
@@ -399,7 +397,9 @@ public class MainFrame extends JFrame {
       try {
         
         steuerung.getParser().parse(inputVerzFile);
-        createTable(); 
+        createTable();
+        steuerung.getDataStorage().resetDataStoragePowerOn();
+        updateDataTable();
         
       } catch(Exception e) {
         
