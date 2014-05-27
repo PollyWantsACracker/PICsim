@@ -43,57 +43,87 @@ public class DataStorage {
     
   }
   
-  public void resetDataStorage() { 
+  public void resetDataStorageWDTNormalOperation() { // WDT-Reset: normal Operation
     
-    for (int i = 0; i < dataStorage.length; i++ ) {
-      
-      switch (i) {
-        
-        case  0: dataStorage[i] = 0;
-        continue;
-        
-        case  1: 
-        continue;
-        
-        case  2: dataStorage[i] = 0;
-        continue;
-        
-        case  3: dataStorage[i] = 0;
-        continue;  
-        
+    dataStorage[0] = 0;
+    dataStorage[2] = 0;
+    dataStorage[3] = 8 + (dataStorage[3] & 0x07);
+    dataStorage[5] = dataStorage[5] & 0x1f;
+    dataStorage[10] = 0;
+    dataStorage[11] = dataStorage[11] & 0x01;
+    dataStorage[128] = 0;
+    dataStorage[129] = 255;
+    dataStorage[130] = 0;
+    dataStorage[131] = 8 + (dataStorage[3] & 0x07);
+    dataStorage[133] = 31;
+    dataStorage[134] = 255;
+    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
+    dataStorage[137] = 0;
+    dataStorage[138] = 0;
+    dataStorage[139] = dataStorage[139] & 0x01;   
+    
+  }
   
-        default: 
-        
-      } // end of switch
-      
-    }
+  public void resetDataStorageSleep() { // !MCLR-Reset: Sleep
+    
+    dataStorage[0] = 0;
+    dataStorage[2] = 0;
+    dataStorage[3] = 16 + (dataStorage[3] & 0x07);
+    dataStorage[5] = dataStorage[5] & 0x1f;
+    dataStorage[10] = 0;
+    dataStorage[11] = dataStorage[11] & 0x01;
+    dataStorage[128] = 0;
+    dataStorage[129] = 255;
+    dataStorage[130] = 0;
+    dataStorage[131] = 16 + (dataStorage[3] & 0x07);
+    dataStorage[133] = 31;
+    dataStorage[134] = 255;
+    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
+    dataStorage[137] = 0;
+    dataStorage[138] = 0;
+    dataStorage[139] = dataStorage[139] & 0x01;   
+    
+  }
+  
+  public void resetDataStorageNormalOperation() { // !MCLR-Reset: normal Operation
+    
+    dataStorage[0] = 0;
+    dataStorage[2] = 0;
+    dataStorage[3] = dataStorage[3] & 0x1f;
+    dataStorage[5] = dataStorage[5] & 0x1f;
+    dataStorage[10] = 0;
+    dataStorage[11] = dataStorage[11] & 0x01;
+    dataStorage[128] = 0;
+    dataStorage[129] = 255;
+    dataStorage[130] = 0;
+    dataStorage[131] = dataStorage[131] & 0x1f;
+    dataStorage[133] = 31;
+    dataStorage[134] = 255;
+    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
+    dataStorage[137] = 0;
+    dataStorage[138] = 0;
+    dataStorage[139] = dataStorage[139] & 0x01;   
+    
   }
   
   public void resetDataStoragePowerOn() { // Power-on Reset
     
-    for (int i = 0; i < dataStorage.length; i++ ) {
-      
-      switch (i) {
-        
-        case  3: dataStorage[i] = 24;  
-        continue;
-        
-        case  129: dataStorage[i] = 255;
-        continue; 
-        
-        case 131: dataStorage[i] = 24;
-        continue;
-        
-        case 133: dataStorage[i] = 31;
-        continue;
-        
-        case 134: dataStorage[i] = 255;
-        continue;
-        
-        default: dataStorage[i] = 0;
-        continue;
-        
-      }  
-    } 
+    dataStorage[0] = 0;  
+    dataStorage[2] = 0;  
+    dataStorage[3] = 24 + (dataStorage[3] & 0x07);  
+    dataStorage[5] = dataStorage[5] & 0x1f;  
+    dataStorage[10] = 0;  
+    dataStorage[11] = dataStorage[11] & 0x01;  
+    dataStorage[128] = 0;  
+    dataStorage[129] = 255;
+    dataStorage[130] = 0;  
+    dataStorage[131] = 24 + (dataStorage[131] & 0x07);
+    dataStorage[133] = 31;
+    dataStorage[134] = 255;
+    dataStorage[136] = dataStorage[136] & 0x08;
+    dataStorage[137] = 0;
+    dataStorage[138] = 0;
+    dataStorage[139] = dataStorage[139] & 0x01;
+    
   }
 }
