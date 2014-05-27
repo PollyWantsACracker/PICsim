@@ -43,6 +43,40 @@ public class DataStorage {
     
   }
   
+  public void resetDataStorageWDTInterrupt() { // WDT-Reset: Interrupt
+    
+    dataStorage[0] = 0;
+    dataStorage[2] = dataStorage[2] + 1; // unvollständig
+    dataStorage[3] = 16 + (dataStorage[3] & 0xe7);
+    dataStorage[5] = dataStorage[5] & 0x1f;
+    dataStorage[10] = dataStorage[10] & 0x1f;
+    dataStorage[128] = 0;
+    dataStorage[130] = dataStorage[130] + 1; // unvollständig
+    dataStorage[131] = 16 + (dataStorage[131] & 0xe7);
+    dataStorage[133] = dataStorage[133] & 0x1f;
+    dataStorage[136] = dataStorage[136] & 0x0f;
+    dataStorage[137] = 0;
+    dataStorage[138] = dataStorage[138] & 0x1f;    
+    
+  }
+  
+  public void resetDataStorageWDTWakeUp() { // WDT-Reset: Wake Up
+    
+    dataStorage[0] = 0;
+    dataStorage[2] = dataStorage[2] + 1;
+    dataStorage[3] = dataStorage[3] & 0xe7;
+    dataStorage[5] = dataStorage[5] & 0x1f;
+    dataStorage[10] = dataStorage[10] & 0x1f;
+    dataStorage[128] = 0;
+    dataStorage[130] = dataStorage[130] + 1;
+    dataStorage[131] = dataStorage[131] & 0xe7;
+    dataStorage[133] = dataStorage[133] & 0x1f;
+    dataStorage[136] = dataStorage[136] & 0x0f;
+    dataStorage[137] = 0;
+    dataStorage[138] = dataStorage[138] & 0x1f;    
+    
+  }
+  
   public void resetDataStorageWDTNormalOperation() { // WDT-Reset: normal Operation
     
     dataStorage[0] = 0;
@@ -54,7 +88,7 @@ public class DataStorage {
     dataStorage[128] = 0;
     dataStorage[129] = 255;
     dataStorage[130] = 0;
-    dataStorage[131] = 8 + (dataStorage[3] & 0x07);
+    dataStorage[131] = 8 + (dataStorage[131] & 0x07);
     dataStorage[133] = 31;
     dataStorage[134] = 255;
     dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
@@ -75,7 +109,7 @@ public class DataStorage {
     dataStorage[128] = 0;
     dataStorage[129] = 255;
     dataStorage[130] = 0;
-    dataStorage[131] = 16 + (dataStorage[3] & 0x07);
+    dataStorage[131] = 16 + (dataStorage[131] & 0x07);
     dataStorage[133] = 31;
     dataStorage[134] = 255;
     dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt

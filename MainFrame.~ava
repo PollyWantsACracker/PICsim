@@ -7,6 +7,9 @@ import java.beans.*;
 import java.io.*;
 import javax.swing.filechooser.*;
 import javax.swing.table.*;
+import org.w3c.dom.Document;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.*;
 
 public class MainFrame extends JFrame {
   
@@ -215,10 +218,16 @@ public class MainFrame extends JFrame {
         } else if (i != 0 && j != 0) { // Alle Textfelder (DataStorage)
           
           jTextFieldDataStorage[(i - 1) * 16 + (j - 1)] = new JTextField();
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setName(Integer.toString((i - 1) * 16 + (j - 1)));
           jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setPreferredSize(new Dimension(25, 25));
           jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setText(Integer.toHexString(steuerung.getDataStorage().getValue((i - 1) * 16 + (j - 1))));
           jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setHorizontalAlignment(SwingConstants.CENTER);
-          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setEditable(true);
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e){
+              mouseClicked_Action(e);
+            }
+          });
+          jTextFieldDataStorage[(i - 1) * 16 + (j - 1)].setFocusable(false);
           jPanelDataStorage.add(jTextFieldDataStorage[(i - 1) * 16 + (j - 1)]);
           
         } else if (i != 0 && j == 17) { // Platzhalter jeweils am ende einer Zeile
@@ -228,6 +237,72 @@ public class MainFrame extends JFrame {
           jPanelDataStorage.add(jLabelDataStorage[j]);
           
         }
+      }
+    }
+  }
+  
+  public void mouseClicked_Action(MouseEvent e) {
+    
+    int count = e.getClickCount();
+    
+    if(count == 2) {
+      
+      JTextField jTextFieldDummy = (JTextField) e.getComponent();
+      
+      String registerHexName = Integer.toHexString(Integer.parseInt(jTextFieldDummy.getName()));
+      int registerAdress = Integer.parseInt(registerHexName, 16);
+      String actualHexValue = Integer.toHexString(steuerung.getDataStorage().getValue(registerAdress));
+      
+      JPanel jPanelRegistervalueChange = new JPanel();
+      jPanelRegistervalueChange.setPreferredSize(new Dimension(0, 92));
+      jPanelRegistervalueChange.setBorder(BorderFactory.createTitledBorder("Register " + registerHexName));
+      
+      JLabel jLabelActualValue = new JLabel("Aktueller Wert: " + actualHexValue);
+      jLabelActualValue.setPreferredSize(new Dimension(155, 25));
+      jPanelRegistervalueChange.add(jLabelActualValue);
+      
+      JLabel jLabelNewValue = new JLabel("Neuer Wert:");
+      jPanelRegistervalueChange.add(jLabelNewValue);
+      
+      JTextFieldLimit jTextFieldNewValue = new JTextFieldLimit(2);
+      jTextFieldNewValue.setPreferredSize(new Dimension(25, 25));
+      jTextFieldNewValue.setHorizontalAlignment(SwingConstants.CENTER);
+      jPanelRegistervalueChange.add(jTextFieldNewValue);
+      
+      JLabel jLabelHex = new JLabel("h");
+      jLabelHex.setPreferredSize(new Dimension(17, 25));
+      jPanelRegistervalueChange.add(jLabelHex);
+      
+      int answer = JOptionPane.showOptionDialog(this, jPanelRegistervalueChange , "Registerinhalt ändern", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null ,null);
+      
+      if (answer == JOptionPane.CLOSED_OPTION || answer == JOptionPane.CANCEL_OPTION) {
+        
+        return;
+        
+      } 
+      
+      String newValue = jTextFieldNewValue.getText();
+      
+      if (newValue.equals("")) {
+        
+        return;
+        
+      } 
+      
+      try {
+        
+        int hexString = Integer.parseInt(newValue, 16);
+        steuerung.getDataStorage().setValue(registerAdress, hexString);
+        jTextFieldDummy.setText(newValue);
+        
+      } catch(Exception ex) {
+        
+        JOptionPane.showMessageDialog(this, "Der eingegebene Wert ist ungültig!", "Fehler", JOptionPane.ERROR_MESSAGE);
+        
+      } finally {
+        
+        return;
+        
       }
     }
   }
@@ -388,7 +463,7 @@ public class MainFrame extends JFrame {
     }); 
     
     chooser.setVisible(true); 
-    final int result = chooser.showOpenDialog(null); 
+    final int result = chooser.showOpenDialog(this); 
     
     if (result == JFileChooser.APPROVE_OPTION) { 
       
@@ -422,7 +497,7 @@ public class MainFrame extends JFrame {
   
   private void jMenuItemInfoViewActionPerformed(ActionEvent evt) {                                                  
     
-    JOptionPane.showMessageDialog(this, "Name:                    " + this.getTitle() + "\nMotivation:            Der Simulator ist ein Testat für die Vorlesung Rechnerarchitektur an der DHBW Karlsruhe\nBeschreibung:     Dieser Simulator liest .lst-Dateien (in Form von .txt-Dateien) ein und simmluiert den darin enthalten Assemblercode\nAutoren:                Christopher Heß und Alexander Burkhardt (TINF12B5)", "Info", JOptionPane.INFORMATION_MESSAGE); 
+    JOptionPane.showMessageDialog(this, "Name:                    " + this.getTitle() + "\nMotivation:            Der Simulator ist ein Testat für die Vorlesung Rechnerarchitektur an der DHBW Karlsruhe\nBeschreibung:     Dieser Simulator liest .lst-Dateien ein und simmluiert den darin enthalten Assemblercode\nAutoren:                Christopher Heß und Alexander Burkhardt (TINF12B5)", "Info", JOptionPane.INFORMATION_MESSAGE); 
     
   }
   
@@ -451,6 +526,39 @@ public class MainFrame extends JFrame {
       
     }
   }
+  
+  public class JTextFieldLimit extends JTextField {
+    
+    private int limit;
+    
+    public JTextFieldLimit(int limit) {
+      
+      super();
+      this.limit = limit;
+      
+    }
+    
+    protected javax.swing.text.Document createDefaultModel() {
+      
+      return new LimitDocument();
+      
+    } 
+    
+    private class LimitDocument extends PlainDocument {
+      
+      public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
+        
+        if (str == null) return;
+        
+        if ((getLength() + str.length()) <= limit) {
+          
+          super.insertString(offset, str, attr);
+          
+        }
+      }       
+    }
+  }
+  
   class MyTableModel extends AbstractTableModel {
     
     private String[] columnNames;

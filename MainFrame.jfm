@@ -1,6 +1,6 @@
 object mainFrame: TFGUIFormular
-  Left = 0
-  Top = 32
+  Left = 8
+  Top = 64
   BorderIcons = []
   Caption = 'MainFrame'
   ClientHeight = 561
