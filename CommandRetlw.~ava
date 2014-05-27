@@ -10,7 +10,7 @@ public class CommandRetlw extends Command{
   }
 
   public int executeCommand() {
-  
+    
     wRegister.setValue(parameter1);
     return stack.getLastAddress();
     

@@ -9,63 +9,43 @@ public class CommandComf extends Command{
   public int executeCommand() {
     
     int actualValue;
-    int complementedValue;
     
-    if (parameter1 == 0 && parameter2 == 0) {
+    if (parameter1 == 0) { // indirekte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + 4);
-      complementedValue = actualValue ^ 0xff;
       
-      if (complementedValue == 0) {
-        
-        setZero(true);
-        
-      } 
-      
-      wRegister.setValue(complementedValue);
-      
-    } else if (parameter1 == 0 && parameter2 == 1){
-      
-      actualValue = dataStorage.getValue(getBankOffset() + 4);
-      complementedValue = actualValue ^ 0xff;
-      
-      if (complementedValue == 0) {
-        
-        setZero(true);
-        
-      } 
-      
-      dataStorage.setValue(getBankOffset() + 4, complementedValue);
-      
-    } else if (parameter1 != 0 && parameter2 == 0) {
+    } else { // direkte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + parameter1);
-      complementedValue = actualValue ^ 0xff;
       
-      if (complementedValue == 0) {
-        
-        setZero(true);
-        
-      } 
+    } 
+    
+    int complementedValue = actualValue ^ 0xff;
+    
+    if (complementedValue == 0) {
       
-      wRegister.setValue(complementedValue);
-      
-    } else if (parameter1 != 0 && parameter2 == 1){
-      
-      actualValue = dataStorage.getValue(getBankOffset() + parameter1);
-      complementedValue = actualValue ^ 0xff;
-      
-      if (complementedValue == 0) {
-        
-        setZero(true);
-        
-      } 
-      
-      dataStorage.setValue(getBankOffset() + parameter1, complementedValue);
+      setZero(true);
       
     }
     
-    return 1; 
+    if (parameter2 == 0) { // Ergebnis in W
+      
+      wRegister.setValue(complementedValue);
+      
+    } else { // Ergebnis in F
+      
+      if (parameter1 == 0) { // indirekte Adressierung
+        
+        dataStorage.setValue(getBankOffset() + 4, complementedValue);
+        
+      } else { // direkte Adressierung
+        
+        dataStorage.setValue(getBankOffset() + parameter1, complementedValue);
+        
+      } 
+    } 
+    
+    return -1; 
     
   }
 }

@@ -20,6 +20,12 @@ public abstract class Command {
   
   abstract public int executeCommand();
   
+  public int getMachineCycles() {
+   
+    return machineCycles; 
+    
+  }
+  
   public void setCarry(boolean carry) {
     
     if (carry && !checkCarry()) {

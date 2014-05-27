@@ -34,5 +34,11 @@ public class Steuerung {
   
     return wRegister;
     
+  }
+  
+  public Stack getStack() {
+  
+    return stack;
+    
   }  
 }

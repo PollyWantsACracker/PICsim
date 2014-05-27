@@ -9,7 +9,7 @@ public class CommandMovlw extends Command {
   public int executeCommand() {
     
     wRegister.setValue(parameter1);
-    return 1;
+    return -1;
     
   }
 }

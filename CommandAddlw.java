@@ -10,10 +10,10 @@ public class CommandAddlw extends Command {
     
     int actualValue = wRegister.getValue();
     int newValue = actualValue + parameter1;
-    int lowActualValue = actualValue & 0xf0;
-    int lowNewValue = newValue & 0xf0;
+    int lowActualValue = actualValue & 0x0f;
+    int lowParameterValue = parameter1 & 0x0f;
     
-    if (lowNewValue - lowActualValue != 0) {
+    if (lowActualValue + lowParameterValue > 15) {
       
       setDigitCarry(true);
       
@@ -32,7 +32,8 @@ public class CommandAddlw extends Command {
       
     } 
     
-    return 1;
+    wRegister.setValue(newValue);
+    return -1;
     
   }    
 }

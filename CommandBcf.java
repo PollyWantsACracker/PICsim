@@ -10,22 +10,29 @@ public class CommandBcf extends Command {
     
     int actualValue;
     
-    if (parameter1 == 0) {
+    if (parameter1 == 0) { // indirekte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + 4);
-      int value = ((int)(Math.pow(2, parameter2))) ^ 0xFF;
-      dataStorage.setValue(getBankOffset() + 4 , actualValue & value);
       
-      
-    } else {
+    } else { // direkte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + parameter1);
-      int value = ((int)(Math.pow(2, parameter2))) ^ 0xFF;
-      dataStorage.setValue(getBankOffset() + parameter1 , actualValue & value);
       
     } 
     
-    return 1;
+    int newValue = actualValue & ((int)(Math.pow(2, parameter2)) ^ 0xFF);
+    
+    if (parameter1 == 0) { // indirekte Adressierung
+      
+      dataStorage.setValue(getBankOffset() + 4, actualValue);
+      
+    } else { // direkte Adressierung
+      
+      dataStorage.setValue(getBankOffset() + parameter1, actualValue);
+      
+    } 
+    
+    return -1;
     
   }
 }

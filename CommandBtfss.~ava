@@ -10,23 +10,26 @@ public class CommandBtfss extends Command{
     
     int actualValue;
     
-    if (parameter1 == 0) {
+    if (parameter1 == 0) { // indirekte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + 4);
       
-    } else {
+    } else { // direkte Adressierung
       
       actualValue = dataStorage.getValue(getBankOffset() + parameter1);
       
-    } 
+    }
     
     if ((actualValue & (int)(Math.pow(2, parameter2))) == 0) {
       
-      return 1;
+      this.machineCycles = 1;
+      return -1;
       
-    } 
-
-    return 2;
-    
+    } else {
+      
+      this.machineCycles = 2;
+      return -2;
+      
+    }
   }
 }

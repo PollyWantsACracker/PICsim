@@ -31,7 +31,7 @@ public class Parser {
     
     for (int i = 0; i < lineList.size(); i ++ ) {
       
-      if (lineList.get(i)[1] == "") {
+      if (lineList.get(i)[1] == "") { // es werden nur die relevanten Assemblerbefehle erzeugt
         
         continue;
         
@@ -39,6 +39,7 @@ public class Parser {
       
       int parameter1 = 0;
       int parameter2 = 0;
+      int machineCycles = 0;
       int programmCounterLine = Integer.parseInt(lineList.get(i)[1]);
       int commandCode = Integer.parseInt(lineList.get(i)[2], 16);
       String mask = "3F00";
@@ -47,322 +48,365 @@ public class Parser {
       switch (maskedValue) {
         
         case  1792: //ADDWF
-        
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandAddwf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister())); 
-        
-        break;
+        machineCycles = 1;
+        commandList.add(new CommandAddwf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister())); 
+        continue;
         
         case 1280: //ANDWF
-        
-        case 2304:
-        //COMF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandComf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandAndwf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister())); 
+        continue;
         
-        case 768:
-        //DECF
+        case 2304: //COMF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandDecf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandComf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 2816:
-        //DECFSZ
-        mask = "0080";
-        maskedValue = programmCode & Integer.parseInt(mask, 16);
-        parameter2 = maskedValue;
-        mask = "007F";
-        maskedValue = programmCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandDecfsz(programmCounterLine, parameter1, parameter2, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        case 2560:
-        //INCF
+        case 768: //DECF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandIncf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandDecf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 3840:
-        //INCFSZ
+        case 2816: //DECFSZ
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandIncfsz(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandDecfsz(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 1024:
-        //IORWF
+        case 2560: //INCF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandIorwf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandIncf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 2048:
-        //MOVF
+        case 3840: //INCFSZ
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
+        machineCycles = 1;
+        commandList.add(new CommandIncfsz(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
+        
+        case 1024: //IORWF
+        mask = "0080";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter2 = maskedValue;
+        mask = "007F";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter1 = maskedValue;
+        machineCycles = 1;
+        commandList.add(new CommandIorwf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
+        
+        case 2048: //MOVF
+        mask = "0080";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter2 = maskedValue;
+        mask = "007F";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter1 = maskedValue;
+        machineCycles = 1;
         commandList.add(new CommandMovf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 3328:
-        //RLF
+        case 3328: //RLF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandRlf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandRlf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 3072:
-        //RRF
+        case 3072: //RRF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandRrf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandRrf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 512:
-        //SUBWF
+        case 512: //SUBWF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandSubwf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandSubwf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 3584:
-        //SWAPF
+        case 3584: //SWAPF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandSwapf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandSwapf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 1536:
-        //XORWF
+        case 1536: //XORWF
         mask = "0080";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandXorwf(programmCounterLine, parameter1, parameter2, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandXorwf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 14592:
-        //ANDLW
+        case 14592: //ANDLW
+        mask = "00ff";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter1 = maskedValue;
+        machineCycles = 1;
+        commandList.add(new CommandAndlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 14336:
-        //IORLW
+        case 14336: //IORLW
         mask = "00FF";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandIorlw(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandIorlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 14848:
-        //XORLW
+        case 14848: //XORLW
         mask = "00FF";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandXorlw(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandXorlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
         default:
-        break;
+        
       }
       
       mask = "3C00";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
       switch (maskedValue) {
-        case 13312:
-        //RETLW
+        
+        case 13312: //RETLW
         mask = "00FF";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandRetlw(programmCounterLine, parameter1, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 2;
+        commandList.add(new CommandRetlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister(), steuerung.getStack()));
+        continue;
         
-        case 12288:
-        //MOVLW
+        case 12288: //MOVLW
         mask = "00FF";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandMovlw(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandMovlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 4096:
-        //BCF
+        case 4096: //BCF
         mask = "0380";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandBcf(programmCounterLine, parameter1, parameter2/128, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandBcf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 5120:
-        //BSF
+        case 5120: //BSF
         mask = "0380";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandBsf(programmCounterLine, parameter1, parameter2/128, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandBsf(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 6144:
-        //BTFSC
+        case 6144: //BTFSC
         mask = "0380";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandBtfsc(programmCounterLine, parameter1, parameter2/128, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandBtfsc(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
-        case 7168:
-        //BTFSS
+        case 7168: //BTFSS
         mask = "0380";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
-        commandList.add(new CommandBtfss(programmCounterLine, parameter1, parameter2/128, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+        machineCycles = 1;
+        commandList.add(new CommandBtfss(programmCounterLine, parameter1, parameter2, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        continue;
         
         default:
-        break;
+        
       }
       
       mask = "3FFF";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
-      switch (maskedValue){
-        case 100:
-        //CLRWDT
+      switch (maskedValue) {
         
-        case 9:
-        //RETFIE
+        case 100: //CLRWDT
+        machineCycles = 1;
+        continue;
         
-        case 8:
-        //RETURN
-        commandList.add(new CommandReturn(programmCounterLine, 0, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
+        case 9: //RETFIE
+        machineCycles = 2;
+        continue;
         
-        case 99:
-        //SLEEP
+        case 8: //RETURN
+        machineCycles = 2;
+        commandList.add(new CommandReturn(programmCounterLine, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister(), steuerung.getStack()));
+        continue;
         
-        default:
-        break;
-      }
+        case 99: //SLEEP
+        continue;
+        
+        default: 
+        
+      } // end of switch
       
+      /*
       mask = "3F80";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
       switch (maskedValue){
-        case 256:
-        //CLRW
-        commandList.add(new CommandClrw(programmCounterLine, 0, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        case 384:
-        //CLRF
-        mask = "007F";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandClrf(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        case 128:
-        //MOVWF
-        mask = "007F";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandMovwf(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        default:
-        break;
+      case 256:
+      //CLRW
+      commandList.add(new CommandClrw(programmCounterLine, 0, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      case 384:
+      //CLRF
+      mask = "007F";
+      maskedValue = commandCode & Integer.parseInt(mask, 16);
+      parameter1 = maskedValue;
+      commandList.add(new CommandClrf(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      case 128:
+      //MOVWF
+      mask = "007F";
+      maskedValue = commandCode & Integer.parseInt(mask, 16);
+      parameter1 = maskedValue;
+      commandList.add(new CommandMovwf(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      default:
+      break;
       }
       
       mask = "3800";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
       switch (maskedValue) {
-        case 10240:
-        //GOTO
-        mask = "07FF";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandGoto(programmCounterLine, parameter1, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        case 8192:
-        //CALL
-        mask = "07FF";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandCall(programmCounterLine, parameter1, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        default:
-        break;
+      case 10240:
+      //GOTO
+      mask = "07FF";
+      maskedValue = commandCode & Integer.parseInt(mask, 16);
+      parameter1 = maskedValue;
+      commandList.add(new CommandGoto(programmCounterLine, parameter1, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      case 8192:
+      //CALL
+      mask = "07FF";
+      maskedValue = commandCode & Integer.parseInt(mask, 16);
+      parameter1 = maskedValue;
+      commandList.add(new CommandCall(programmCounterLine, parameter1, 0, 2, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      default:
+      break;
       }
       
       mask = "3E00";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
       switch (maskedValue) {
-        case 15872:
-        //ADDLW
-        mask = "00FF";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
-        parameter1 = maskedValue;
-        commandList.add(new CommandAddlw(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
-        
-        case 15360:
-        //SUBLW
-        
-        default:
-        break;
+      case 15872:
+      //ADDLW
+      mask = "00FF";
+      maskedValue = commandCode & Integer.parseInt(mask, 16);
+      parameter1 = maskedValue;
+      commandList.add(new CommandAddlw(programmCounterLine, parameter1, 0, 1, steuerung.getDataStorage(), steuerung.getWRegister()));
+      
+      case 15360:
+      //SUBLW
+      
+      default:
+      break;
       }
       
       mask = "3F9F";
       maskedValue = commandCode & Integer.parseInt(mask, 16);
       
       if (maskedValue == 0) {
-        //NOP
-        
+      //NOP
+      
       }
       
+      }
+      
+      } // end of for
+      
+      */
+      
     }
-    
-  } // end of for
+  }
   
-   
   public void parse(File sourceFile) throws FileNotFoundException {
     
     Scanner scanner = new Scanner(sourceFile);
@@ -431,7 +475,7 @@ public class Parser {
           String string4 = "";
           
           while (line.length() != 0 && line.charAt(0) != ';') { 
-          
+            
             int index = line.indexOf(' ', 0);
             
             if (index == -1 ) { // Symbol ohne Kommentar

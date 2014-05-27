@@ -6,8 +6,6 @@ import javax.swing.event.*;
 import java.beans.*;
 import java.io.*;
 import javax.swing.filechooser.*;
-//import javax.swing.table.DefaultTableCellRenderer;
-//import javax.swing.table.AbstractTableModel;
 import javax.swing.table.*;
 
 public class MainFrame extends JFrame {
@@ -246,8 +244,7 @@ public class MainFrame extends JFrame {
       
       jTextFieldDataStorage[i].setText(String.valueOf(steuerung.getDataStorage().getValue(i)));
           
-    } // end of for
-    
+    } 
   }
   
   private void initColumns() {

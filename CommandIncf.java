@@ -8,64 +8,50 @@ public class CommandIncf extends Command {
   
   public int executeCommand() {
     
-    int actualIndirectValue = dataStorage.getValue(getBankOffset() + 4);
-    int actualDirectValue = dataStorage.getValue(getBankOffset() + parameter1);
+    int actualValue;
     
-    if (parameter1 == 0 && parameter2 == 0) { // indirekt, Ergebnis in W
+    if (parameter1 == 0) { // indirekte Adressierung
       
-      actualIndirectValue += 1;
+      actualValue = dataStorage.getValue(getBankOffset() + 4);
       
-      if (actualIndirectValue > 255) {
-        
-        actualIndirectValue = 0;
-        setZero(true);
-        
-      } 
+    } else {  // direkte Adressierung
       
-      wRegister.setValue(actualIndirectValue);
+      actualValue = dataStorage.getValue(getBankOffset() + parameter1);
       
-    } else if (parameter1 == 0 && parameter2 == 1) { // indirekt, Ergebnis in F
+    }
+    
+    int newValue = actualValue + 1;
+    
+    if (newValue > 255) {
       
-      actualIndirectValue += 1;
-      
-      if (actualIndirectValue > 255) {
-        
-        actualIndirectValue = 0;
-        setZero(true);
-        
-      } 
-      
-      dataStorage.setValue(getBankOffset() + 4, actualIndirectValue);
-      
-    } else if (parameter1 != 0 && parameter2 == 0) { // direkt, Ergebnis in W
-      
-      actualDirectValue += 1;
-      
-      if (actualDirectValue > 255) {
-        
-        actualDirectValue = 0;
-        setZero(true);
-        
-      } 
-      
-      wRegister.setValue(actualDirectValue);
-      
-    } else if (parameter1 != 0 && parameter2 == 1) { //direkt, Ergebnis in W
-      
-      actualDirectValue += 1;
-      
-      if (actualDirectValue > 255) {
-        
-        actualDirectValue = 0;
-        setZero(true);
-        
-      } 
-      
-      dataStorage.setValue(getBankOffset() + parameter1, actualDirectValue);
+      newValue -= 256;
       
     } 
     
-    return 1;
+    if (newValue == 0) {
+      
+      setZero(true);
+      
+    } 
+    
+    if (parameter2 == 0) { // Ergebnis in W
+      
+      wRegister.setValue(newValue);
+      
+    } else { // Ergebnis in F
+      
+      if (parameter1 == 0) { // indirekte Adressierung
+        
+        dataStorage.setValue(getBankOffset() + 4, newValue);
+        
+      } else { // direkte Adressierung
+        
+        dataStorage.setValue(getBankOffset() + parameter1, newValue);
+        
+      } 
+    } 
+    
+    return -1;
     
   }
 }

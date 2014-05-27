@@ -8,65 +8,53 @@ public class CommandDecfsz extends Command{
   
   public int executeCommand() {
     
-    int actualIndirectValue = dataStorage.getValue(getBankOffset() + 4);
-    int actualDirectValue = dataStorage.getValue(getBankOffset() + parameter1);
+    int actualValue;
     
-    if (parameter1 == 0 && parameter2 == 0) { // indirekt, Ergenis in W
+    if (parameter1 == 0) { // indirekte Adressierung
       
-      actualIndirectValue -= 1;
-      wRegister.setValue(actualIndirectValue);
+      actualValue = dataStorage.getValue(getBankOffset() + 4);
       
-      if (actualIndirectValue == 0) { // Nächster Befehl überspringen
-        
-        return 2;
-        
-      } 
+    } else { // direkte Adressierung
       
-      return 1;
-      
-    } else if (parameter1 == 0 && parameter2 == 1) { // indirekt, Ergebnis in F
-      
-      actualIndirectValue -= 1;
-      dataStorage.setValue(getBankOffset() + 4, actualIndirectValue);
-      
-      if (actualIndirectValue == 0) { // Nächster Befehl überspringen
-        
-        return 2;
-        
-      } 
-      
-      return 1;
-      
-    } else if (parameter1 != 0 && parameter2 == 0) { // direkt, Ergebnis in W
-      
-      actualDirectValue -= 1;
-      wRegister.setValue(actualDirectValue);
-      
-      if (actualDirectValue == 0) { // Nächster Befehl überspringen
-        
-        return 2;
-        
-      } 
-      
-      return 1;
-      
-    } else if (parameter1 != 0 && parameter2 == 1) { // direkt, Ergebnis in F
-      
-      actualDirectValue -= 1;
-      dataStorage.setValue(getBankOffset() + parameter1, actualDirectValue);
-      
-      if (actualDirectValue == 0) { // Nächster Befehl überspringen
-        
-        return 2;
-        
-      } 
-      
-      return 1;
-      
-    } else { // Fehler
-      
-      return 0;
+      actualValue = dataStorage.getValue(getBankOffset() + parameter1);
       
     } 
+    
+    int newValue = actualValue - 1;
+    
+    if (newValue < 0) {
+      
+      newValue += 256;
+      
+    } 
+    
+    if (parameter2 == 0) { // Ergenis in W
+      
+      wRegister.setValue(newValue);
+      
+    } else { // Ergebnis in F
+      
+      if (parameter1 == 0) { // indirekte Adressierung
+        
+        dataStorage.setValue(getBankOffset() + 4, newValue);
+        
+      } else { // direkte Adressierung
+       
+        dataStorage.setValue(getBankOffset() + parameter1, newValue);
+        
+      }
+    }
+    
+    if (newValue == 0) {
+      
+      this.machineCycles = 2;
+      return -2;
+      
+    } else {
+      
+      this.machineCycles = 1;
+      return -1;
+      
+    }
   }
 }
