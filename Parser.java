@@ -6,14 +6,61 @@ public class Parser {
   private List<String[]> lineList;
   private List<Command> commandList;
   private Steuerung steuerung;
+  private int startAdress;
   
   public Parser(Steuerung aSteuerung) {
     
     lineList = new ArrayList<String[]>();
     commandList = new ArrayList<Command>();
     steuerung = aSteuerung;
+    startAdress = 0;
     
   }
+  
+  public Command getCommand(int programmCounter) {
+    
+    int index = 0;
+    
+    for (int i = 0; i < commandList.size(); i++) {
+      
+      if (commandList.get(i).getProgrammCounterLine() == programmCounter) {
+        
+        index = i;
+        break;
+        
+      } 
+      
+    } 
+    
+    return commandList.get(index);
+    
+  }
+  
+  /*public int getStartAdress() {
+  
+  for (int i = 0; i < lineList.size(); i++) {
+  
+  if (lineList.get(i)[4] != "") {
+  
+  String startAdress = lineList.get(i)[4];
+  
+  if (startAdress.startsWith("org")) {
+  
+  S
+  
+  } 
+  
+  
+  } 
+  
+  
+  
+  
+  } 
+  
+  return startAdress;
+  
+  }*/
   
   public int getNumberOfLines() {
     
