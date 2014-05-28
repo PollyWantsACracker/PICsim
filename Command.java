@@ -20,6 +20,12 @@ public abstract class Command {
   
   abstract public int executeCommand();
   
+  public int getProgrammCounterLine() {
+   
+    return programmCounterLine;
+    
+  }
+  
   public int getMachineCycles() {
    
     return machineCycles; 
