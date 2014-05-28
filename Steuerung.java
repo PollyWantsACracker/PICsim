@@ -16,13 +16,34 @@ public class Steuerung {
     stack = new Stack();
     mainFrame = new MainFrame("PIC16F84 Simulator", this);
     
-    
   }
   
-  public void execution() {
+  
+  public void executeCommands() {
     
+    int programmCounter = 0;
+    int newProgrammCounter = 0;
     
-    
+    while (true) { 
+      
+      Command c = parser.getCommand(programmCounter);
+      newProgrammCounter = c.executeCommand();
+      
+      if (newProgrammCounter == -1) {
+        
+        programmCounter += 1;
+        
+      } else if (newProgrammCounter == -2){
+        
+        programmCounter += 2;
+        
+      } else {
+        
+        programmCounter = newProgrammCounter;
+        
+      } 
+      
+    } 
     
   }
   
