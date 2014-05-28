@@ -176,7 +176,7 @@ public class MainFrame extends JFrame {
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
     
-    
+    steuerung.executeCommands();
     
   }
   
@@ -267,42 +267,51 @@ public class MainFrame extends JFrame {
       JTextFieldLimit jTextFieldNewValue = new JTextFieldLimit(2);
       jTextFieldNewValue.setPreferredSize(new Dimension(25, 25));
       jTextFieldNewValue.setHorizontalAlignment(SwingConstants.CENTER);
+      jTextFieldNewValue.addAncestorListener( new RequestFocusListener() ); 
       jPanelRegistervalueChange.add(jTextFieldNewValue);
       
       JLabel jLabelHex = new JLabel("h");
-      jLabelHex.setPreferredSize(new Dimension(17, 25));
+      jLabelHex.setPreferredSize(new Dimension(18, 25));
       jPanelRegistervalueChange.add(jLabelHex);
       
-      int answer = JOptionPane.showOptionDialog(this, jPanelRegistervalueChange , "Registerinhalt ändern", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null ,null);
-      
-      if (answer == JOptionPane.CLOSED_OPTION || answer == JOptionPane.CANCEL_OPTION) {
+      while (true) { 
         
-        return;
+        int answer = JOptionPane.showOptionDialog(this, jPanelRegistervalueChange , "Registerinhalt ändern", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null ,null);
         
-      } 
-      
-      String newValue = jTextFieldNewValue.getText();
-      
-      if (newValue.equals("")) {
+        if (answer == JOptionPane.CLOSED_OPTION || answer == JOptionPane.CANCEL_OPTION) {
+          
+          return;
+          
+        } 
         
-        return;
+        String newValue = jTextFieldNewValue.getText();
         
-      } 
-      
-      try {
+        if (newValue.equals("")) {
+          
+          return;
+          
+        } 
         
-        int hexString = Integer.parseInt(newValue, 16);
-        steuerung.getDataStorage().setValue(registerAdress, hexString);
-        jTextFieldDummy.setText(newValue);
-        
-      } catch(Exception ex) {
-        
-        JOptionPane.showMessageDialog(this, "Der eingegebene Wert ist ungültig!", "Fehler", JOptionPane.ERROR_MESSAGE);
-        
-      } finally {
-        
-        return;
-        
+        try {
+          
+          if (newValue.indexOf('+') != -1 || newValue.indexOf('-') != -1) {
+            
+            JOptionPane.showMessageDialog(this, "Der eingegebene Wert ist ungültig!", "Fehler", JOptionPane.ERROR_MESSAGE);
+            
+          } else {
+            
+            int hexString = Integer.parseInt(newValue, 16);
+            steuerung.getDataStorage().setValue(registerAdress, hexString);
+            jTextFieldDummy.setText(newValue);
+            return;
+            
+          } 
+          
+        } catch(Exception ex) {
+          
+          JOptionPane.showMessageDialog(this, "Der eingegebene Wert ist ungültig!", "Fehler", JOptionPane.ERROR_MESSAGE);
+          
+        } 
       }
     }
   }
@@ -624,4 +633,47 @@ public class MainFrame extends JFrame {
       
     }
   }
+  
+  public class RequestFocusListener implements AncestorListener
+  {
+    private boolean removeListener;
+    
+    /*
+    *  Convenience constructor. The listener is only used once and then it is
+    *  removed from the component.
+    */
+    public RequestFocusListener()
+    {
+      this(true);
+    }
+    
+    /*
+    *  Constructor that controls whether this listen can be used once or
+    *  multiple times.
+    *
+    *  @param removeListener when true this listener is only invoked once
+    *                        otherwise it can be invoked multiple times.
+    */
+    public RequestFocusListener(boolean removeListener)
+    {
+      this.removeListener = removeListener;
+    }
+    
+    @Override
+    public void ancestorAdded(AncestorEvent e)
+    {
+      JComponent component = e.getComponent();
+      component.requestFocusInWindow();
+      
+      if (removeListener)
+      component.removeAncestorListener( this );
+    }
+    
+    @Override
+    public void ancestorMoved(AncestorEvent e) {}
+    
+    @Override
+    public void ancestorRemoved(AncestorEvent e) {}
+  }
+  
 }
