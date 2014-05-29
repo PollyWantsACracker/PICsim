@@ -1,4 +1,5 @@
 import java.util.*;
+import javax.swing.SwingUtilities;
 
 public class Steuerung {
   
@@ -8,23 +9,69 @@ public class Steuerung {
   private WRegister wRegister;
   private Stack stack;
   
+  private static int programmCounter = 0;
+  
   public Steuerung() {
     
+    Steuerung s = this;
     dataStorage = new DataStorage();
     parser = new Parser(this);
     wRegister = new WRegister();
     stack = new Stack();
-    mainFrame = new MainFrame("PIC16F84 Simulator", this);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mainFrame = new MainFrame("PIC16F84 Simulator", s);
+      }
+    });
+  }
+  
+  public void executeOneCommand() {
+    
+    System.out.println("aktueller programmcounter: " + Integer.toHexString(programmCounter));
+    
+    int newProgrammCounter = 0;
+    Command c = parser.getCommand(programmCounter);
+    newProgrammCounter = c.executeCommand();
+    
+    if (newProgrammCounter == -1) {
+      
+      programmCounter += 1;
+      
+    } else if (newProgrammCounter == -2){
+      
+      programmCounter += 2;
+      
+    } else {
+      
+      programmCounter = newProgrammCounter;
+      
+    }
+    
+    mainFrame.updateDataStorage();
+    System.out.println("neuer programmcounter: " + Integer.toHexString(programmCounter));
     
   }
   
+  public int getProgrammCounter() {
+    
+    return programmCounter;
+    
+  }
+  
+  public void setProgrammCounter(int newProgrammCounter) {
+    
+    programmCounter = newProgrammCounter;
+    
+  }
   
   public void executeCommands() {
     
     int programmCounter = 0;
     int newProgrammCounter = 0;
     
-    while (true) { 
+    while (mainFrame.getRunning()) { 
       
       Command c = parser.getCommand(programmCounter);
       newProgrammCounter = c.executeCommand();
@@ -41,7 +88,9 @@ public class Steuerung {
         
         programmCounter = newProgrammCounter;
         
-      } 
+      }
+      
+      mainFrame.updateDataStorage(); 
       
     } 
     

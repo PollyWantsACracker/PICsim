@@ -36,12 +36,18 @@ public class MainFrame extends JFrame {
   
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
-  private JButton jButtonStop = new JButton();
+  private JButton jButtonOneStep = new JButton();
+  
   
   private JTable jTableSourceCode;
   
   private String[] columnHeaders;
   private Object[][] tableData;
+  
+  private ExecutionWorker executionWorker;
+  
+  private boolean running;
+  private boolean loadedFile;
   
   public MainFrame(String title, Steuerung s) { 
     
@@ -123,10 +129,10 @@ public class MainFrame extends JFrame {
     cp.add(jScrollPaneSourceCode);
     
     jPanelDataStorage = new JPanel();
-    jPanelDataStorage.setPreferredSize(new Dimension(525, 520)); // 525
+    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
     
     jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 315, 115, 125);
+    jPanelSteuerpult.setBounds(0, 315, 130, 125);
     jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
     cp.add(jPanelSteuerpult);
     
@@ -135,7 +141,7 @@ public class MainFrame extends JFrame {
     jLabelDataStorage = new JLabel[48];
     jTextFieldDataStorage = new JTextField[256];
     
-    jButtonReset.setPreferredSize(new Dimension(80, 25));
+    jButtonReset.setPreferredSize(new Dimension(100, 25));
     jButtonReset.setText("Reset");
     jButtonReset.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
@@ -144,7 +150,7 @@ public class MainFrame extends JFrame {
     });
     jPanelSteuerpult.add(jButtonReset);
     
-    jButtonStart.setPreferredSize(new Dimension(80, 25));
+    jButtonStart.setPreferredSize(new Dimension(100, 25));
     jButtonStart.setText("Start");
     jButtonStart.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
@@ -153,35 +159,67 @@ public class MainFrame extends JFrame {
     });
     jPanelSteuerpult.add(jButtonStart);
     
-    jButtonStop.setPreferredSize(new Dimension(80, 25));
-    jButtonStop.setText("Stop");
-    jButtonStop.addActionListener(new ActionListener() { 
+    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
+    jButtonOneStep.setText("OneStep");
+    jButtonOneStep.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
-        jButtonStop_ActionPerformed(evt);
+        jButtonOneStep_ActionPerformed(evt);
       }
     });
-    jPanelSteuerpult.add(jButtonStop);
+    jPanelSteuerpult.add(jButtonOneStep);
     
     initSpeicher();
+    
+    loadedFile = false;
+    running = false;
     
     setVisible(true);
     
   }
   
+  public boolean getRunning() {
+    
+    return running;
+    
+  }
+  
   public void jButtonReset_ActionPerformed(ActionEvent evt) {
     
+    if (loadedFile && running) {
+      
+      running = false; 
+      executionWorker.cancel(true);
+      jButtonStart.setEnabled(true);
+      
+      
+    } 
     
-    
+    steuerung.setProgrammCounter(0);
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
     
-    steuerung.executeCommands();
+    if (loadedFile) {
+      
+      jButtonStart.setEnabled(false);
+      running = true;
+      executionWorker = new ExecutionWorker(steuerung);
+      executionWorker.execute();
+      
+    } 
     
   }
   
-  public void jButtonStop_ActionPerformed(ActionEvent evt) {
+  
+  
+  public void jButtonOneStep_ActionPerformed(ActionEvent evt) {
     
+    if (loadedFile) {
+      
+      steuerung.executeOneCommand();
+      automaticTableScroll();
+      
+    } 
     
     
   }
@@ -316,7 +354,7 @@ public class MainFrame extends JFrame {
     }
   }
   
-  public void updateDataTable(){
+  public void updateDataStorage(){
     
     for (int i = 0;i<256;i++) {
       
@@ -361,7 +399,7 @@ public class MainFrame extends JFrame {
   
   private void layoutTable() {
     
-    jTableSourceCode.getTableHeader().setResizingAllowed(false);
+    jTableSourceCode.getTableHeader().setResizingAllowed(true);
     jTableSourceCode.getTableHeader().setReorderingAllowed(false);
     
     DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -419,7 +457,22 @@ public class MainFrame extends JFrame {
         if( column != 0 ) {
           
           JLabel cellLabel = (JLabel)cell;  
-          boolean showRow = (Boolean)jTableSourceCode.getModel().getValueAt(row, 0); 
+          boolean showRow = (Boolean)jTableSourceCode.getModel().getValueAt(row, 0);
+          String cellText = (String)jTableSourceCode.getModel().getValueAt(row, 1);
+          
+          if (!cellText.equals("")) {
+            
+            int hexValue = Integer.parseInt(cellText, 16);
+            
+            if (hexValue == steuerung.getProgrammCounter()) {
+              
+              cellLabel.setBackground(Color.YELLOW);
+              return cellLabel;
+              
+            } 
+            
+          } 
+          
           
           if( showRow == false ) {  
             
@@ -431,9 +484,10 @@ public class MainFrame extends JFrame {
           else {  
             
             cellLabel.setForeground(Color.WHITE);
-            cellLabel.setBackground( Color.RED );  
+            cellLabel.setBackground( Color.RED );
             
           }  
+          
           
           
           return cellLabel;  
@@ -446,6 +500,14 @@ public class MainFrame extends JFrame {
     };
     
     layoutTable();
+    automaticTableScroll();
+    
+  }
+  
+  private void automaticTableScroll() {
+    
+    int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getProgrammCounter());
+    jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
     
   }
   
@@ -483,7 +545,8 @@ public class MainFrame extends JFrame {
         steuerung.getParser().parse(inputVerzFile);
         createTable();
         steuerung.getDataStorage().resetDataStoragePowerOn();
-        updateDataTable();
+        updateDataStorage();
+        loadedFile = true;
         
       } catch(Exception e) {
         

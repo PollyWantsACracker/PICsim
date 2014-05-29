@@ -36,41 +36,40 @@ public class Parser {
     
   }
   
-  /*public int getStartAdress() {
-  
-  for (int i = 0; i < lineList.size(); i++) {
-  
-  if (lineList.get(i)[4] != "") {
-  
-  String startAdress = lineList.get(i)[4];
-  
-  if (startAdress.startsWith("org")) {
-  
-  S
-  
-  } 
-  
-  
-  } 
-  
-  
-  
-  
-  } 
-  
-  return startAdress;
-  
-  }*/
-  
   public int getNumberOfLines() {
     
     return lineList.size();
     
   }
   
-  public String getString(int i, int j) {
+  public String getString(int row, int column) {
     
-    return lineList.get(i)[j];
+    return lineList.get(row)[column];
+    
+  }
+  
+  public int getCurrentCommandTableIndex(int programmCounter) {
+    
+    for (int i = 0; i < lineList.size() ; i++) {
+      
+      if (lineList.get(i)[0] == "") {
+        
+        continue;
+        
+      } 
+      
+      if (Integer.parseInt(lineList.get(i)[0], 16) == programmCounter) {
+        
+        programmCounter = i;
+        break;
+        
+      } 
+      
+      
+      
+    } 
+    
+    return programmCounter;
     
   }
   
@@ -555,7 +554,7 @@ public class Parser {
             
           }
           
-          parsedLine[4] = string4.substring(1);
+          parsedLine[4] = string4.substring(0, string4.length() - 1);
           parsedLine[5] = line.substring(1);
           return parsedLine;
           
@@ -597,10 +596,21 @@ public class Parser {
       
       parsedLine[0] = line.substring(0, 4);
       parsedLine[1] = line.substring(5, 9);
-      parsedLine[2] = line.substring(20, 25);
-      parsedLine[3] = "";
+      parsedLine[2] = line.substring(20, 25); 
       
-      line = cutString(line.substring(25), true);
+      if (line.charAt(27) != ' ') { // Befehl plus Sprungmaske
+        
+        line = cutString(line.substring(25), true);
+        parsedLine[3] = line.substring(0, line.indexOf(' ', 0));
+        line = cutString(line, false);
+        line = cutString(line, true);
+        
+      } else {
+        
+        parsedLine[3] = "";
+        line = cutString(line.substring(25), true);
+        
+      } 
       
       String string3 = "";
       
