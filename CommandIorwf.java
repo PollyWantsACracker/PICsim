@@ -9,11 +9,20 @@ public class CommandIorwf extends Command {
   public int executeCommand() {
     
     int actualWValue = wRegister.getValue();
-    int actualFValue;
+    int actualFValue = 0;
+    int registerIndex = 0;
     
     if (parameter1 == 0) { // indirekte Adressierung
       
-      actualFValue = dataStorage.getValue(getBankOffset() + 4);
+      registerIndex = dataStorage.getValue(getBankOffset() + 4);
+      
+      if (registerIndex == 0) { // NOP
+        
+        return -1;
+        
+      } 
+      
+      actualFValue = dataStorage.getValue(registerIndex);
       
     } else { // direkte Adressierung
       
@@ -27,7 +36,11 @@ public class CommandIorwf extends Command {
       
       setZero(true);
       
-    } 
+    } else {
+      
+      setZero(false);
+      
+    }
     
     if (parameter2 == 0) { // Ergebnis in W
       
@@ -37,7 +50,7 @@ public class CommandIorwf extends Command {
       
       if (parameter1 == 0) { // indirekte Adressierung
         
-        dataStorage.setValue(getBankOffset() + 4, newValue);
+        dataStorage.setValue(registerIndex, newValue);
         
       } else { // direkte Adressierung
         
@@ -45,7 +58,7 @@ public class CommandIorwf extends Command {
         
       } 
     } 
-  
+    
     return -1;
     
   }

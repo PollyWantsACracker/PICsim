@@ -15,43 +15,33 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class MainFrame extends JFrame {
   
-  private Steuerung steuerung;
-  
-  private JMenuBar jMenuBar;
-  
-  private JMenu jMenuFile;
-  private JMenu jMenuInfo;
-  private JMenu jMenuHelp;
-  
-  private JMenuItem jMenuItemFileOpen;
-  private JMenuItem jMenuItemInfoView;
-  private JMenuItem jMenuItemHelpView;
-  
-  private JScrollPane jScrollPaneDataStorage;
-  private JScrollPane jScrollPaneSourceCode;
-  
-  private JPanel jPanelDataStorage;
-  private JPanel jPanelSteuerpult;
-  
-  private JLabel[] jLabelDataStorage;
-  private JTextField[] jTextFieldDataStorage;
-  
-  private JButton jButtonReset = new JButton();
-  private JButton jButtonStart = new JButton();
-  private JButton jButtonOneStep = new JButton();
-  
-  
-  private JTable jTableSourceCode;
-  
-  private String[] columnHeaders;
-  private Object[][] tableData;
-  
-  private ExecutionWorker executionWorker;
-  
   private boolean running;
   private boolean loadedFile;
   
-  public MainFrame(String title, Steuerung s) { 
+  private Steuerung steuerung;
+  private ExecutionWorker executionWorker;
+  private JLabel[] jLabelDataStorage;
+  private JTextField[] jTextFieldDataStorage;
+  private String[] columnHeaders;
+  private Object[][] tableData;
+  
+  private JMenuBar jMenuBar;
+  private JMenu jMenuFile;
+  private JMenu jMenuInfo;
+  private JMenu jMenuHelp;
+  private JMenuItem jMenuItemFileOpen;
+  private JMenuItem jMenuItemInfoView;
+  private JMenuItem jMenuItemHelpView;
+  private JScrollPane jScrollPaneDataStorage;
+  private JScrollPane jScrollPaneSourceCode;
+  private JPanel jPanelDataStorage;
+  private JPanel jPanelSteuerpult;
+  private JButton jButtonReset = new JButton();
+  private JButton jButtonStart = new JButton();
+  private JButton jButtonOneStep = new JButton();
+  private JTable jTableSourceCode;
+  
+  public MainFrame(String title, Steuerung aSteuerung) { 
     
     super(title);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -65,18 +55,109 @@ public class MainFrame extends JFrame {
     setResizable(true);
     Container cp = getContentPane();
     cp.setLayout(null);
-    
-    steuerung = s;
-    
     this.setIconImage(Toolkit.getDefaultToolkit().getImage("Images/favicon.png"));
+    
+    loadedFile = false;
+    running = false;
+    
+    steuerung = aSteuerung;
+    jLabelDataStorage = new JLabel[48];
+    jTextFieldDataStorage = new JTextField[256];
+    
+    initMenueBar();
+    initScrollPanes();
+    initPanels();
+    initButtons();
+    initDataStorage();
+    
+    setVisible(true);
+    
+  }
+  
+  public boolean getRunning() {
+   
+    return running;
+    
+  }
+  
+  private void initButtons() {
+    
+    jButtonReset.setPreferredSize(new Dimension(100, 25));
+    jButtonReset.setText("Reset");
+    
+    jButtonReset.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonReset_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonReset);
+    
+    jButtonStart.setPreferredSize(new Dimension(100, 25));
+    jButtonStart.setText("Start");
+    
+    jButtonStart.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonStart_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonStart);
+    
+    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
+    jButtonOneStep.setText("OneStep");
+    
+    jButtonOneStep.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonOneStep_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonOneStep);
+    
+  }
+  
+  private void initPanels() {
+    
+    jPanelDataStorage = new JPanel();
+    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
+    
+    jPanelSteuerpult = new JPanel();
+    jPanelSteuerpult.setBounds(0, 315, 130, 125);
+    jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
+    getContentPane().add(jPanelSteuerpult);
+    
+    jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
+    
+  }
+  
+  private void initScrollPanes() {
+    
+    jScrollPaneDataStorage = new JScrollPane();
+    jScrollPaneDataStorage.setBounds(0, 0, 307, 315);
+    jScrollPaneDataStorage.setBorder(BorderFactory.createTitledBorder("Speicher"));
+    jScrollPaneDataStorage.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    jScrollPaneDataStorage.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    getContentPane().add(jScrollPaneDataStorage);
+    
+    jScrollPaneSourceCode = new JScrollPane();
+    jScrollPaneSourceCode.setBounds(307, 0, 475, 315);
+    jScrollPaneSourceCode.setBorder(BorderFactory.createTitledBorder("Quellcode"));
+    jScrollPaneSourceCode.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    jScrollPaneSourceCode.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    getContentPane().add(jScrollPaneSourceCode);
+    
+  }
+  
+  private void initMenueBar() {
     
     jMenuBar = new JMenuBar();
     
     jMenuFile = new JMenu();
     jMenuFile.setText("Datei");
-    
     jMenuItemFileOpen = new JMenuItem();
     jMenuItemFileOpen.setText("Öffnen");
+    
     jMenuItemFileOpen.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemFileOpenActionPerformed(evt);
@@ -88,9 +169,9 @@ public class MainFrame extends JFrame {
     
     jMenuInfo = new JMenu();
     jMenuInfo.setText("Info");
-    
     jMenuItemInfoView = new JMenuItem();
     jMenuItemInfoView.setText("Info Anzeigen");
+    
     jMenuItemInfoView.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemInfoViewActionPerformed(evt);
@@ -102,9 +183,9 @@ public class MainFrame extends JFrame {
     
     jMenuHelp = new JMenu();
     jMenuHelp.setText("Hilfe");
-    
     jMenuItemHelpView = new JMenuItem();
     jMenuItemHelpView.setText("Hilfe Anzeigen");
+    
     jMenuItemHelpView.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemHelpViewActionPerformed(evt);
@@ -115,73 +196,6 @@ public class MainFrame extends JFrame {
     jMenuBar.add(jMenuHelp);
     
     setJMenuBar(jMenuBar);
-    
-    jScrollPaneDataStorage = new JScrollPane();
-    jScrollPaneDataStorage.setBounds(0, 0, 307, 315);
-    jScrollPaneDataStorage.setBorder(BorderFactory.createTitledBorder("Speicher"));
-    jScrollPaneDataStorage.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    jScrollPaneDataStorage.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    cp.add(jScrollPaneDataStorage);
-    
-    jScrollPaneSourceCode = new JScrollPane();
-    jScrollPaneSourceCode.setBounds(307, 0, 475, 315);
-    jScrollPaneSourceCode.setBorder(BorderFactory.createTitledBorder("Quellcode"));
-    jScrollPaneSourceCode.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    jScrollPaneSourceCode.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    cp.add(jScrollPaneSourceCode);
-    
-    jPanelDataStorage = new JPanel();
-    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
-    
-    jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 315, 130, 125);
-    jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
-    cp.add(jPanelSteuerpult);
-    
-    jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
-    
-    jLabelDataStorage = new JLabel[48];
-    jTextFieldDataStorage = new JTextField[256];
-    
-    jButtonReset.setPreferredSize(new Dimension(100, 25));
-    jButtonReset.setText("Reset");
-    jButtonReset.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonReset_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonReset);
-    
-    jButtonStart.setPreferredSize(new Dimension(100, 25));
-    jButtonStart.setText("Start");
-    jButtonStart.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonStart_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonStart);
-    
-    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
-    jButtonOneStep.setText("OneStep");
-    jButtonOneStep.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonOneStep_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonOneStep);
-    
-    initSpeicher();
-    
-    loadedFile = false;
-    running = false;
-    
-    setVisible(true);
-    
-  }
-  
-  public boolean getRunning() {
-    
-    return running;
     
   }
   
@@ -194,9 +208,7 @@ public class MainFrame extends JFrame {
       jButtonStart.setEnabled(true);
       automaticTableScroll();
       
-      
     } 
-    
     
     steuerung.setProgrammCounter(0);
     
@@ -205,7 +217,6 @@ public class MainFrame extends JFrame {
       automaticTableScroll();
       
     } 
-    
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
@@ -217,12 +228,9 @@ public class MainFrame extends JFrame {
       executionWorker = new ExecutionWorker(steuerung);
       executionWorker.execute();
       
-    } 
-    
+    }  
   }
-  
-  
-  
+
   public void jButtonOneStep_ActionPerformed(ActionEvent evt) {
     
     if (loadedFile) {
@@ -231,12 +239,9 @@ public class MainFrame extends JFrame {
       automaticTableScroll();
       
     } 
-    
-    
   }
-  
-  
-  private void initSpeicher() {
+
+  private void initDataStorage() {
     
     for (int i = 0; i < 17; i++ ) {
       
@@ -381,8 +386,6 @@ public class MainFrame extends JFrame {
         jTextFieldDataStorage[i].setBackground(Color.WHITE);
         
       } 
-      
-      
     } 
   }
   
@@ -431,9 +434,11 @@ public class MainFrame extends JFrame {
     jScrollPaneSourceCode.setColumnHeader(new JViewport() {
       
       public Dimension getPreferredSize() {
+        
         Dimension d = super.getPreferredSize();
         d.height = 25;
         return d;
+        
       }
       
     });
@@ -453,12 +458,9 @@ public class MainFrame extends JFrame {
     jTableSourceCode.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);    
     jTableSourceCode.getColumnModel().getColumn(6).setPreferredWidth(400);
     
-    
     jTableSourceCode.setRowHeight(22);
     jTableSourceCode.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-    
     jTableSourceCode.setFont(new Font("Arial", Font.BOLD, 12));
-    
     jTableSourceCode.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     
   }
@@ -471,7 +473,7 @@ public class MainFrame extends JFrame {
     initRows(numberOfRows, numberOfColumns);
     
     jTableSourceCode = new MyTable(new MyTableModel(tableData, columnHeaders), steuerung);
-
+    
     layoutTable();
     automaticTableScroll();
     
@@ -526,14 +528,7 @@ public class MainFrame extends JFrame {
         
         JOptionPane.showMessageDialog(this, "Fehler beim Parsen der lst-Datei!\n" + e, "Fehler", JOptionPane.ERROR_MESSAGE);
         
-      } finally {
-        
-        
-        
       } 
-      
-      
-    } else {
       
     } 
     
@@ -552,6 +547,7 @@ public class MainFrame extends JFrame {
     try {
       
       File pdfFile = new File("Hilfe.pdf"); 
+      
       if (pdfFile.exists()) {
         
         if (Desktop.isDesktopSupported()) {

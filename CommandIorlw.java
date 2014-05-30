@@ -15,7 +15,11 @@ public class CommandIorlw extends Command{
       
       setZero(true);
       
-    }
+    } else {
+      
+      setZero(false);
+      
+    } 
     
     wRegister.setValue(newValue);
     return -1;

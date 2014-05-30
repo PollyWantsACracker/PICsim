@@ -8,11 +8,20 @@ public class CommandBtfsc extends Command {
   
   public int executeCommand() {
     
-    int actualValue;
+    int actualValue = 0;
+    int registerIndex = 0;
     
     if (parameter1 == 0) { // indirekte Adressierung
       
-      actualValue = dataStorage.getValue(getBankOffset() + 4);
+      registerIndex = dataStorage.getValue(getBankOffset() + 4);
+      
+      if (registerIndex == 0) { // NOP
+        
+        return -1;
+        
+      } 
+      
+      actualValue = dataStorage.getValue(registerIndex);
       
     } else { // direkte Adressierung
       

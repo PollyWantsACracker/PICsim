@@ -8,11 +8,20 @@ public class CommandDecfsz extends Command{
   
   public int executeCommand() {
     
-    int actualValue;
+    int actualValue = 0;
+    int registerIndex = 0;
     
     if (parameter1 == 0) { // indirekte Adressierung
       
-      actualValue = dataStorage.getValue(getBankOffset() + 4);
+      registerIndex = dataStorage.getValue(getBankOffset() + 4);
+      
+      if (registerIndex == 0) { // NOP
+        
+        return -1;
+        
+      } 
+      
+      actualValue = dataStorage.getValue(registerIndex);
       
     } else { // direkte Adressierung
       
@@ -36,10 +45,10 @@ public class CommandDecfsz extends Command{
       
       if (parameter1 == 0) { // indirekte Adressierung
         
-        dataStorage.setValue(getBankOffset() + 4, newValue);
+        dataStorage.setValue(registerIndex, newValue);
         
       } else { // direkte Adressierung
-       
+        
         dataStorage.setValue(getBankOffset() + parameter1, newValue);
         
       }

@@ -21,13 +21,13 @@ public abstract class Command {
   abstract public int executeCommand();
   
   public int getProgrammCounterLine() {
-   
+    
     return programmCounterLine;
     
   }
   
   public int getMachineCycles() {
-   
+    
     return machineCycles; 
     
   }
@@ -64,7 +64,7 @@ public abstract class Command {
       
       dataStorage.setValue(3, dataStorage.getValue(3) + 4);
       
-    } else if (!zero && checkZero()) {
+    }  else if (!zero && checkZero()) {
       
       dataStorage.setValue(3, dataStorage.getValue(3) - 4);
       
@@ -73,7 +73,7 @@ public abstract class Command {
   
   public int getBankOffset() {
     
-    if ((dataStorage.getValue(3) & 0x5) == 1) { 
+    if ((dataStorage.getValue(3) & 0x16) == 16) { 
       
       return 128;
       
@@ -97,7 +97,7 @@ public abstract class Command {
   
   public boolean checkDigitCarry() { // true --> DigitCarry = 1, false --> DigitCarry = 0
     
-    if ((dataStorage.getValue(3) & 0x02) == 1)  {
+    if ((dataStorage.getValue(3) & 0x02) == 2)  {
       
       return true;
       
@@ -109,7 +109,9 @@ public abstract class Command {
   
   public boolean checkZero() { // true --> Zero = 1, false --> Zero = 0
     
-    if ((dataStorage.getValue(3) & 0x04) == 1)  {
+    int actualValue = dataStorage.getValue(3);
+    
+    if ((actualValue & 0x04) == 4)  {
       
       return true;
       

@@ -17,6 +17,10 @@ public class CommandAddlw extends Command {
       
       setDigitCarry(true);
       
+    } else {
+      
+      setDigitCarry(false);
+      
     } 
     
     if (newValue > 255) {
@@ -24,11 +28,19 @@ public class CommandAddlw extends Command {
       newValue -= 256;
       setCarry(true);
       
-    }
+    } else {
+      
+      setCarry(false);
+      
+    } 
     
     if (newValue == 0) {
       
       setZero(true);
+      
+    } else {
+      
+      setZero(false);
       
     } 
     

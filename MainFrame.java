@@ -74,6 +74,12 @@ public class MainFrame extends JFrame {
     
   }
   
+  public boolean getRunning() {
+   
+    return running;
+    
+  }
+  
   private void initButtons() {
     
     jButtonReset.setPreferredSize(new Dimension(100, 25));
@@ -473,7 +479,7 @@ public class MainFrame extends JFrame {
     
   }
   
-  private void automaticTableScroll() {
+  public void automaticTableScroll() { // nur für den OneStep-Mode
     
     int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getProgrammCounter());
     jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));

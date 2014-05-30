@@ -11,12 +11,12 @@ import javax.swing.text.BadLocationException;
 
 public class JTextFieldLimit extends JTextField {
   
-  private int limit;
+  private int characterLimit;
   
-  public JTextFieldLimit(int limit) {
+  public JTextFieldLimit(int aCharacterLimit) {
     
     super();
-    this.limit = limit;
+    characterLimit = aCharacterLimit;
     
   }
   
@@ -32,11 +32,11 @@ public class JTextFieldLimit extends JTextField {
       
       if (str == null) return;
       
-      if ((getLength() + str.length()) <= limit) {
+      if ((getLength() + str.length()) <= characterLimit) {
         
         super.insertString(offset, str, attr);
         
       }
     }       
-  }
+  }  
 }
