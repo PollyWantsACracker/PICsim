@@ -29,8 +29,6 @@ public class Steuerung {
   
   public void executeOneCommand() {
     
-    System.out.println("aktueller programmcounter: " + Integer.toHexString(programmCounter));
-    
     int newProgrammCounter = 0;
     Command c = parser.getCommand(programmCounter);
     newProgrammCounter = c.executeCommand();
@@ -50,7 +48,6 @@ public class Steuerung {
     }
     
     mainFrame.updateDataStorage();
-    System.out.println("neuer programmcounter: " + Integer.toHexString(programmCounter));
     
   }
   

@@ -1,0 +1,42 @@
+/*
+Die Instanz dieser Klasse beschreibt ein spezielles JTextField.
+Dieses JTextField hat eine begrenze Anzahl ein Character.
+Es wird benötigt, damit bei einer Registeränderung der Wert innerhalb 0 - 255 bleibt.
+*/
+
+import javax.swing.JTextField;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+
+public class JTextFieldLimit extends JTextField {
+  
+  private int characterLimit;
+  
+  public JTextFieldLimit(int aCharacterLimit) {
+    
+    super();
+    characterLimit = aCharacterLimit;
+    
+  }
+  
+  protected javax.swing.text.Document createDefaultModel() {
+    
+    return new LimitDocument();
+    
+  } 
+  
+  private class LimitDocument extends PlainDocument {
+    
+    public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
+      
+      if (str == null) return;
+      
+      if ((getLength() + str.length()) <= characterLimit) {
+        
+        super.insertString(offset, str, attr);
+        
+      }
+    }       
+  }  
+}

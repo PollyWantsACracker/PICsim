@@ -1,15 +1,17 @@
+/*
+Die Instanz dieser Klasse bildet das Hauptfenster der Anwendung.
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.beans.*;
-import java.io.*;
-import javax.swing.filechooser.*;
-import javax.swing.table.*;
-import org.w3c.dom.Document;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.io.File;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class MainFrame extends JFrame {
   
@@ -190,11 +192,20 @@ public class MainFrame extends JFrame {
       running = false; 
       executionWorker.cancel(true);
       jButtonStart.setEnabled(true);
+      automaticTableScroll();
       
       
     } 
     
+    
     steuerung.setProgrammCounter(0);
+    
+    if (loadedFile) {
+      
+      automaticTableScroll();
+      
+    } 
+    
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
@@ -358,7 +369,19 @@ public class MainFrame extends JFrame {
     
     for (int i = 0;i<256;i++) {
       
-      jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
+      int oldValue = Integer.parseInt(jTextFieldDataStorage[i].getText(),16);
+      
+      if (steuerung.getDataStorage().getValue(i) != oldValue) {
+        
+        jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
+        jTextFieldDataStorage[i].setBackground(Color.YELLOW);
+        
+      } else {
+        
+        jTextFieldDataStorage[i].setBackground(Color.WHITE);
+        
+      } 
+      
       
     } 
   }
@@ -447,58 +470,8 @@ public class MainFrame extends JFrame {
     int numberOfColumns = columnHeaders.length;
     initRows(numberOfRows, numberOfColumns);
     
-    jTableSourceCode = new JTable(new MyTableModel(tableData, columnHeaders)) {
-      
-      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {  
-        
-        Component cell = super.prepareRenderer(renderer, row, column);  
-        String selectedCellValue = getValueAt(row, column).toString();  
-        
-        if( column != 0 ) {
-          
-          JLabel cellLabel = (JLabel)cell;  
-          boolean showRow = (Boolean)jTableSourceCode.getModel().getValueAt(row, 0);
-          String cellText = (String)jTableSourceCode.getModel().getValueAt(row, 1);
-          
-          if (!cellText.equals("")) {
-            
-            int hexValue = Integer.parseInt(cellText, 16);
-            
-            if (hexValue == steuerung.getProgrammCounter()) {
-              
-              cellLabel.setBackground(Color.YELLOW);
-              return cellLabel;
-              
-            } 
-            
-          } 
-          
-          
-          if( showRow == false ) {  
-            
-            cellLabel.setForeground(Color.BLACK);
-            cellLabel.setBackground( Color.WHITE );
-            
-          }  
-          
-          else {  
-            
-            cellLabel.setForeground(Color.WHITE);
-            cellLabel.setBackground( Color.RED );
-            
-          }  
-          
-          
-          
-          return cellLabel;  
-        }  
-        
-        repaint();
-        return cell;  
-      }  
-      
-    };
-    
+    jTableSourceCode = new MyTable(new MyTableModel(tableData, columnHeaders), steuerung);
+
     layoutTable();
     automaticTableScroll();
     
@@ -508,6 +481,7 @@ public class MainFrame extends JFrame {
     
     int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getProgrammCounter());
     jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
+    jTableSourceCode.repaint();
     
   }
   
@@ -598,145 +572,4 @@ public class MainFrame extends JFrame {
       
     }
   }
-  
-  public class JTextFieldLimit extends JTextField {
-    
-    private int limit;
-    
-    public JTextFieldLimit(int limit) {
-      
-      super();
-      this.limit = limit;
-      
-    }
-    
-    protected javax.swing.text.Document createDefaultModel() {
-      
-      return new LimitDocument();
-      
-    } 
-    
-    private class LimitDocument extends PlainDocument {
-      
-      public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
-        
-        if (str == null) return;
-        
-        if ((getLength() + str.length()) <= limit) {
-          
-          super.insertString(offset, str, attr);
-          
-        }
-      }       
-    }
-  }
-  
-  class MyTableModel extends AbstractTableModel {
-    
-    private String[] columnNames;
-    private Object[][] data;
-    
-    public MyTableModel (Object[][] tableData, String[] columnHeaders) {
-      
-      columnNames = columnHeaders;
-      data = tableData;
-      
-    }
-    
-    public int getColumnCount() {
-      
-      return columnNames.length;
-      
-    }
-    
-    public int getRowCount() {
-      
-      return data.length;
-      
-    }
-    
-    public String getColumnName(int col) {
-      
-      return columnNames[col];
-      
-    }
-    
-    public Object getValueAt(int row, int col) {
-      
-      return data[row][col];
-      
-    }
-    
-    public Class getColumnClass(int c) {
-      
-      return getValueAt(0, c).getClass();
-      
-    }
-    
-    public boolean isCellEditable(int row, int col) {
-      
-      if (col == 0 && data[row][col + 1] != "") {
-        
-        return true ;  
-        
-      } else {
-        
-        return false;
-        
-      }
-    }
-    /*
-    * Don't need to implement this method unless your table's
-    * data can change.
-    */
-    public void setValueAt(Object value, int row, int col) {
-      
-      data[row][col] = value;
-      fireTableCellUpdated(row, col);
-      
-    }
-  }
-  
-  public class RequestFocusListener implements AncestorListener
-  {
-    private boolean removeListener;
-    
-    /*
-    *  Convenience constructor. The listener is only used once and then it is
-    *  removed from the component.
-    */
-    public RequestFocusListener()
-    {
-      this(true);
-    }
-    
-    /*
-    *  Constructor that controls whether this listen can be used once or
-    *  multiple times.
-    *
-    *  @param removeListener when true this listener is only invoked once
-    *                        otherwise it can be invoked multiple times.
-    */
-    public RequestFocusListener(boolean removeListener)
-    {
-      this.removeListener = removeListener;
-    }
-    
-    @Override
-    public void ancestorAdded(AncestorEvent e)
-    {
-      JComponent component = e.getComponent();
-      component.requestFocusInWindow();
-      
-      if (removeListener)
-      component.removeAncestorListener( this );
-    }
-    
-    @Override
-    public void ancestorMoved(AncestorEvent e) {}
-    
-    @Override
-    public void ancestorRemoved(AncestorEvent e) {}
-  }
-  
 }

@@ -17,6 +17,7 @@ public class WRegister {
   public void setValue(int newValue) {
     
     value = newValue;
+    System.out.println(value);
     
   }
 }

@@ -1,55 +1,47 @@
+/*
+Die Instanz dieser Klasse bildet das Hauptfenster der Anwendung.
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import java.beans.*;
-import java.io.*;
-import javax.swing.filechooser.*;
-import javax.swing.table.*;
-import org.w3c.dom.Document;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.io.File;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class MainFrame extends JFrame {
-  
-  private Steuerung steuerung;
-  
-  private JMenuBar jMenuBar;
-  
-  private JMenu jMenuFile;
-  private JMenu jMenuInfo;
-  private JMenu jMenuHelp;
-  
-  private JMenuItem jMenuItemFileOpen;
-  private JMenuItem jMenuItemInfoView;
-  private JMenuItem jMenuItemHelpView;
-  
-  private JScrollPane jScrollPaneDataStorage;
-  private JScrollPane jScrollPaneSourceCode;
-  
-  private JPanel jPanelDataStorage;
-  private JPanel jPanelSteuerpult;
-  
-  private JLabel[] jLabelDataStorage;
-  private JTextField[] jTextFieldDataStorage;
-  
-  private JButton jButtonReset = new JButton();
-  private JButton jButtonStart = new JButton();
-  private JButton jButtonOneStep = new JButton();
-  
-  
-  private JTable jTableSourceCode;
-  
-  private String[] columnHeaders;
-  private Object[][] tableData;
-  
-  private ExecutionWorker executionWorker;
   
   private boolean running;
   private boolean loadedFile;
   
-  public MainFrame(String title, Steuerung s) { 
+  private Steuerung steuerung;
+  private ExecutionWorker executionWorker;
+  private JLabel[] jLabelDataStorage;
+  private JTextField[] jTextFieldDataStorage;
+  private String[] columnHeaders;
+  private Object[][] tableData;
+  
+  private JMenuBar jMenuBar;
+  private JMenu jMenuFile;
+  private JMenu jMenuInfo;
+  private JMenu jMenuHelp;
+  private JMenuItem jMenuItemFileOpen;
+  private JMenuItem jMenuItemInfoView;
+  private JMenuItem jMenuItemHelpView;
+  private JScrollPane jScrollPaneDataStorage;
+  private JScrollPane jScrollPaneSourceCode;
+  private JPanel jPanelDataStorage;
+  private JPanel jPanelSteuerpult;
+  private JButton jButtonReset = new JButton();
+  private JButton jButtonStart = new JButton();
+  private JButton jButtonOneStep = new JButton();
+  private JTable jTableSourceCode;
+  
+  public MainFrame(String title, Steuerung aSteuerung) { 
     
     super(title);
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -63,18 +55,103 @@ public class MainFrame extends JFrame {
     setResizable(true);
     Container cp = getContentPane();
     cp.setLayout(null);
-    
-    steuerung = s;
-    
     this.setIconImage(Toolkit.getDefaultToolkit().getImage("Images/favicon.png"));
+    
+    loadedFile = false;
+    running = false;
+    
+    steuerung = aSteuerung;
+    jLabelDataStorage = new JLabel[48];
+    jTextFieldDataStorage = new JTextField[256];
+    
+    initMenueBar();
+    initScrollPanes();
+    initPanels();
+    initButtons();
+    initDataStorage();
+    
+    setVisible(true);
+    
+  }
+  
+  private void initButtons() {
+    
+    jButtonReset.setPreferredSize(new Dimension(100, 25));
+    jButtonReset.setText("Reset");
+    
+    jButtonReset.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonReset_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonReset);
+    
+    jButtonStart.setPreferredSize(new Dimension(100, 25));
+    jButtonStart.setText("Start");
+    
+    jButtonStart.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonStart_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonStart);
+    
+    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
+    jButtonOneStep.setText("OneStep");
+    
+    jButtonOneStep.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonOneStep_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelSteuerpult.add(jButtonOneStep);
+    
+  }
+  
+  private void initPanels() {
+    
+    jPanelDataStorage = new JPanel();
+    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
+    
+    jPanelSteuerpult = new JPanel();
+    jPanelSteuerpult.setBounds(0, 315, 130, 125);
+    jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
+    getContentPane().add(jPanelSteuerpult);
+    
+    jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
+    
+  }
+  
+  private void initScrollPanes() {
+    
+    jScrollPaneDataStorage = new JScrollPane();
+    jScrollPaneDataStorage.setBounds(0, 0, 307, 315);
+    jScrollPaneDataStorage.setBorder(BorderFactory.createTitledBorder("Speicher"));
+    jScrollPaneDataStorage.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    jScrollPaneDataStorage.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    getContentPane().add(jScrollPaneDataStorage);
+    
+    jScrollPaneSourceCode = new JScrollPane();
+    jScrollPaneSourceCode.setBounds(307, 0, 475, 315);
+    jScrollPaneSourceCode.setBorder(BorderFactory.createTitledBorder("Quellcode"));
+    jScrollPaneSourceCode.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+    jScrollPaneSourceCode.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    getContentPane().add(jScrollPaneSourceCode);
+    
+  }
+  
+  private void initMenueBar() {
     
     jMenuBar = new JMenuBar();
     
     jMenuFile = new JMenu();
     jMenuFile.setText("Datei");
-    
     jMenuItemFileOpen = new JMenuItem();
     jMenuItemFileOpen.setText("Öffnen");
+    
     jMenuItemFileOpen.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemFileOpenActionPerformed(evt);
@@ -86,9 +163,9 @@ public class MainFrame extends JFrame {
     
     jMenuInfo = new JMenu();
     jMenuInfo.setText("Info");
-    
     jMenuItemInfoView = new JMenuItem();
     jMenuItemInfoView.setText("Info Anzeigen");
+    
     jMenuItemInfoView.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemInfoViewActionPerformed(evt);
@@ -100,9 +177,9 @@ public class MainFrame extends JFrame {
     
     jMenuHelp = new JMenu();
     jMenuHelp.setText("Hilfe");
-    
     jMenuItemHelpView = new JMenuItem();
     jMenuItemHelpView.setText("Hilfe Anzeigen");
+    
     jMenuItemHelpView.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         jMenuItemHelpViewActionPerformed(evt);
@@ -114,73 +191,6 @@ public class MainFrame extends JFrame {
     
     setJMenuBar(jMenuBar);
     
-    jScrollPaneDataStorage = new JScrollPane();
-    jScrollPaneDataStorage.setBounds(0, 0, 307, 315);
-    jScrollPaneDataStorage.setBorder(BorderFactory.createTitledBorder("Speicher"));
-    jScrollPaneDataStorage.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    jScrollPaneDataStorage.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    cp.add(jScrollPaneDataStorage);
-    
-    jScrollPaneSourceCode = new JScrollPane();
-    jScrollPaneSourceCode.setBounds(307, 0, 475, 315);
-    jScrollPaneSourceCode.setBorder(BorderFactory.createTitledBorder("Quellcode"));
-    jScrollPaneSourceCode.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    jScrollPaneSourceCode.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    cp.add(jScrollPaneSourceCode);
-    
-    jPanelDataStorage = new JPanel();
-    jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
-    
-    jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 315, 130, 125);
-    jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
-    cp.add(jPanelSteuerpult);
-    
-    jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
-    
-    jLabelDataStorage = new JLabel[48];
-    jTextFieldDataStorage = new JTextField[256];
-    
-    jButtonReset.setPreferredSize(new Dimension(100, 25));
-    jButtonReset.setText("Reset");
-    jButtonReset.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonReset_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonReset);
-    
-    jButtonStart.setPreferredSize(new Dimension(100, 25));
-    jButtonStart.setText("Start");
-    jButtonStart.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonStart_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonStart);
-    
-    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
-    jButtonOneStep.setText("OneStep");
-    jButtonOneStep.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent evt) { 
-        jButtonOneStep_ActionPerformed(evt);
-      }
-    });
-    jPanelSteuerpult.add(jButtonOneStep);
-    
-    initSpeicher();
-    
-    loadedFile = false;
-    running = false;
-    
-    setVisible(true);
-    
-  }
-  
-  public boolean getRunning() {
-    
-    return running;
-    
   }
   
   public void jButtonReset_ActionPerformed(ActionEvent evt) {
@@ -190,11 +200,17 @@ public class MainFrame extends JFrame {
       running = false; 
       executionWorker.cancel(true);
       jButtonStart.setEnabled(true);
-      
+      automaticTableScroll();
       
     } 
     
     steuerung.setProgrammCounter(0);
+    
+    if (loadedFile) {
+      
+      automaticTableScroll();
+      
+    } 
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
@@ -206,12 +222,9 @@ public class MainFrame extends JFrame {
       executionWorker = new ExecutionWorker(steuerung);
       executionWorker.execute();
       
-    } 
-    
+    }  
   }
-  
-  
-  
+
   public void jButtonOneStep_ActionPerformed(ActionEvent evt) {
     
     if (loadedFile) {
@@ -220,12 +233,9 @@ public class MainFrame extends JFrame {
       automaticTableScroll();
       
     } 
-    
-    
   }
-  
-  
-  private void initSpeicher() {
+
+  private void initDataStorage() {
     
     for (int i = 0; i < 17; i++ ) {
       
@@ -358,8 +368,18 @@ public class MainFrame extends JFrame {
     
     for (int i = 0;i<256;i++) {
       
-      jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
+      int oldValue = Integer.parseInt(jTextFieldDataStorage[i].getText(),16);
       
+      if (steuerung.getDataStorage().getValue(i) != oldValue) {
+        
+        jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
+        jTextFieldDataStorage[i].setBackground(Color.YELLOW);
+        
+      } else {
+        
+        jTextFieldDataStorage[i].setBackground(Color.WHITE);
+        
+      } 
     } 
   }
   
@@ -408,9 +428,11 @@ public class MainFrame extends JFrame {
     jScrollPaneSourceCode.setColumnHeader(new JViewport() {
       
       public Dimension getPreferredSize() {
+        
         Dimension d = super.getPreferredSize();
         d.height = 25;
         return d;
+        
       }
       
     });
@@ -430,12 +452,9 @@ public class MainFrame extends JFrame {
     jTableSourceCode.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);    
     jTableSourceCode.getColumnModel().getColumn(6).setPreferredWidth(400);
     
-    
     jTableSourceCode.setRowHeight(22);
     jTableSourceCode.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-    
     jTableSourceCode.setFont(new Font("Arial", Font.BOLD, 12));
-    
     jTableSourceCode.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     
   }
@@ -447,57 +466,7 @@ public class MainFrame extends JFrame {
     int numberOfColumns = columnHeaders.length;
     initRows(numberOfRows, numberOfColumns);
     
-    jTableSourceCode = new JTable(new MyTableModel(tableData, columnHeaders)) {
-      
-      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {  
-        
-        Component cell = super.prepareRenderer(renderer, row, column);  
-        String selectedCellValue = getValueAt(row, column).toString();  
-        
-        if( column != 0 ) {
-          
-          JLabel cellLabel = (JLabel)cell;  
-          boolean showRow = (Boolean)jTableSourceCode.getModel().getValueAt(row, 0);
-          String cellText = (String)jTableSourceCode.getModel().getValueAt(row, 1);
-          
-          if (!cellText.equals("")) {
-            
-            int hexValue = Integer.parseInt(cellText, 16);
-            
-            if (hexValue == steuerung.getProgrammCounter()) {
-              
-              cellLabel.setBackground(Color.YELLOW);
-              return cellLabel;
-              
-            } 
-            
-          } 
-          
-          
-          if( showRow == false ) {  
-            
-            cellLabel.setForeground(Color.BLACK);
-            cellLabel.setBackground( Color.WHITE );
-            
-          }  
-          
-          else {  
-            
-            cellLabel.setForeground(Color.WHITE);
-            cellLabel.setBackground( Color.RED );
-            
-          }  
-          
-          
-          
-          return cellLabel;  
-        }  
-        
-        repaint();
-        return cell;  
-      }  
-      
-    };
+    jTableSourceCode = new MyTable(new MyTableModel(tableData, columnHeaders), steuerung);
     
     layoutTable();
     automaticTableScroll();
@@ -508,6 +477,7 @@ public class MainFrame extends JFrame {
     
     int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getProgrammCounter());
     jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
+    jTableSourceCode.repaint();
     
   }
   
@@ -552,14 +522,7 @@ public class MainFrame extends JFrame {
         
         JOptionPane.showMessageDialog(this, "Fehler beim Parsen der lst-Datei!\n" + e, "Fehler", JOptionPane.ERROR_MESSAGE);
         
-      } finally {
-        
-        
-        
       } 
-      
-      
-    } else {
       
     } 
     
@@ -578,6 +541,7 @@ public class MainFrame extends JFrame {
     try {
       
       File pdfFile = new File("Hilfe.pdf"); 
+      
       if (pdfFile.exists()) {
         
         if (Desktop.isDesktopSupported()) {
@@ -598,145 +562,4 @@ public class MainFrame extends JFrame {
       
     }
   }
-  
-  public class JTextFieldLimit extends JTextField {
-    
-    private int limit;
-    
-    public JTextFieldLimit(int limit) {
-      
-      super();
-      this.limit = limit;
-      
-    }
-    
-    protected javax.swing.text.Document createDefaultModel() {
-      
-      return new LimitDocument();
-      
-    } 
-    
-    private class LimitDocument extends PlainDocument {
-      
-      public void insertString( int offset, String  str, AttributeSet attr ) throws BadLocationException {
-        
-        if (str == null) return;
-        
-        if ((getLength() + str.length()) <= limit) {
-          
-          super.insertString(offset, str, attr);
-          
-        }
-      }       
-    }
-  }
-  
-  class MyTableModel extends AbstractTableModel {
-    
-    private String[] columnNames;
-    private Object[][] data;
-    
-    public MyTableModel (Object[][] tableData, String[] columnHeaders) {
-      
-      columnNames = columnHeaders;
-      data = tableData;
-      
-    }
-    
-    public int getColumnCount() {
-      
-      return columnNames.length;
-      
-    }
-    
-    public int getRowCount() {
-      
-      return data.length;
-      
-    }
-    
-    public String getColumnName(int col) {
-      
-      return columnNames[col];
-      
-    }
-    
-    public Object getValueAt(int row, int col) {
-      
-      return data[row][col];
-      
-    }
-    
-    public Class getColumnClass(int c) {
-      
-      return getValueAt(0, c).getClass();
-      
-    }
-    
-    public boolean isCellEditable(int row, int col) {
-      
-      if (col == 0 && data[row][col + 1] != "") {
-        
-        return true ;  
-        
-      } else {
-        
-        return false;
-        
-      }
-    }
-    /*
-    * Don't need to implement this method unless your table's
-    * data can change.
-    */
-    public void setValueAt(Object value, int row, int col) {
-      
-      data[row][col] = value;
-      fireTableCellUpdated(row, col);
-      
-    }
-  }
-  
-  public class RequestFocusListener implements AncestorListener
-  {
-    private boolean removeListener;
-    
-    /*
-    *  Convenience constructor. The listener is only used once and then it is
-    *  removed from the component.
-    */
-    public RequestFocusListener()
-    {
-      this(true);
-    }
-    
-    /*
-    *  Constructor that controls whether this listen can be used once or
-    *  multiple times.
-    *
-    *  @param removeListener when true this listener is only invoked once
-    *                        otherwise it can be invoked multiple times.
-    */
-    public RequestFocusListener(boolean removeListener)
-    {
-      this.removeListener = removeListener;
-    }
-    
-    @Override
-    public void ancestorAdded(AncestorEvent e)
-    {
-      JComponent component = e.getComponent();
-      component.requestFocusInWindow();
-      
-      if (removeListener)
-      component.removeAncestorListener( this );
-    }
-    
-    @Override
-    public void ancestorMoved(AncestorEvent e) {}
-    
-    @Override
-    public void ancestorRemoved(AncestorEvent e) {}
-  }
-  
 }
