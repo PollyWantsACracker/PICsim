@@ -25,6 +25,7 @@ public class MainFrame extends JFrame {
   private JTextField[] jTextFieldDataStorage;
   private String[] columnHeaders;
   private Object[][] tableData;
+  private String[] quarzFrequenzen;
   
   private JLabel jLabelWRegister;
   private JLabel jLabelWRegisterValue;
@@ -34,6 +35,9 @@ public class MainFrame extends JFrame {
   private JLabel jLabelPCLValue;
   private JLabel jLabelStatus;
   private JLabel jLabelStatusValue;
+  private JLabel jLabelLaufzeit;
+  private JLabel jLabelLaufzeitEinheit;
+  private JComboBox jComboBoxQuarzFrequenzen;
   
   private JMenuBar jMenuBar;
   private JMenu jMenuFile;
@@ -48,10 +52,12 @@ public class MainFrame extends JFrame {
   private JPanel jPanelSteuerpult;
   private JPanel jPanelSpecialFunctions;
   private JPanel jPanelLaufzeit;
+  private JPanel jPanelQuarzfrequenz;
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
   private JButton jButtonOneStep = new JButton();
   private JButton jButtonStop = new JButton();
+  private JButton jButtonZurücksetzen = new JButton();
   private JTable jTableSourceCode;
   
   private AbstractAction resetButtonPressed;
@@ -86,9 +92,10 @@ public class MainFrame extends JFrame {
     initScrollPanes();
     initPanels();
     initButtonPressedEvents();
+    initLabels();
     initButtons();
     initDataStorage();
-    initLabels();
+    
     
     setVisible(true);
     
@@ -144,6 +151,18 @@ public class MainFrame extends JFrame {
     jLabelStatusValue.setText("0");
     jPanelSpecialFunctions.add(jLabelStatusValue);
     
+    jLabelLaufzeit = new JLabel();
+    jLabelLaufzeit.setPreferredSize(new Dimension(60, 20));
+    jLabelLaufzeit.setHorizontalAlignment(SwingConstants.RIGHT);
+    jLabelLaufzeit.setText(Integer.toString(steuerung.getLaufzeit()));
+    jPanelLaufzeit.add(jLabelLaufzeit);
+    
+    jLabelLaufzeitEinheit = new JLabel();
+    jLabelLaufzeitEinheit.setPreferredSize(new Dimension(60, 20));
+    jLabelLaufzeitEinheit.setHorizontalAlignment(SwingConstants.LEFT);
+    jLabelLaufzeitEinheit.setText("µs");
+    jPanelLaufzeit.add(jLabelLaufzeitEinheit);
+    
   }
   
   private void initButtonPressedEvents() {
@@ -198,7 +217,7 @@ public class MainFrame extends JFrame {
   
   private void initButtons() {
     
-    jButtonReset.setPreferredSize(new Dimension(110, 25));
+    jButtonReset.setPreferredSize(new Dimension(108, 20));
     jButtonReset.setText("Reset (F1)");
     
     jButtonReset.addActionListener(new ActionListener() { 
@@ -211,7 +230,7 @@ public class MainFrame extends JFrame {
     jButtonReset.getActionMap().put("F1_pressed", resetButtonPressed);
     jPanelSteuerpult.add(jButtonReset);
     
-    jButtonStart.setPreferredSize(new Dimension(110, 25));
+    jButtonStart.setPreferredSize(new Dimension(108, 20));
     jButtonStart.setText("Start (F2)");
     
     jButtonStart.addActionListener(new ActionListener() { 
@@ -225,7 +244,7 @@ public class MainFrame extends JFrame {
     jButtonStart.getActionMap().put("F2_pressed", startButtonPressed);
     jPanelSteuerpult.add(jButtonStart);
     
-    jButtonOneStep.setPreferredSize(new Dimension(110, 25));
+    jButtonOneStep.setPreferredSize(new Dimension(108, 20));
     jButtonOneStep.setText("OneStep (F3)");
     
     jButtonOneStep.addActionListener(new ActionListener() { 
@@ -238,7 +257,7 @@ public class MainFrame extends JFrame {
     jButtonOneStep.getActionMap().put("F3_pressed", oneStepButtonPressed);
     jPanelSteuerpult.add(jButtonOneStep);
     
-    jButtonStop.setPreferredSize(new Dimension(110, 25));
+    jButtonStop.setPreferredSize(new Dimension(108, 20));
     jButtonStop.setText("Stop (F4)");
     
     jButtonStop.addActionListener(new ActionListener() { 
@@ -251,6 +270,17 @@ public class MainFrame extends JFrame {
     jButtonStop.getActionMap().put("F4_pressed", stopButtonPressed);
     jPanelSteuerpult.add(jButtonStop);
     
+    jButtonZurücksetzen.setPreferredSize(new Dimension(112, 20));
+    jButtonZurücksetzen.setText("Zurücksetzen");
+    
+    jButtonZurücksetzen.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonZurücksetzen_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelLaufzeit.add(jButtonZurücksetzen);
+    
   }
   
   private void initPanels() {
@@ -259,21 +289,35 @@ public class MainFrame extends JFrame {
     jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
     
     jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 315, 153, 155);
+    jPanelSteuerpult.setBounds(0, 315, 153, 135);
     jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
     getContentPane().add(jPanelSteuerpult);
     
     jPanelSpecialFunctions = new JPanel();
-    jPanelSpecialFunctions.setBounds(153, 315, 154, 155);
+    jPanelSpecialFunctions.setBounds(153, 315, 154, 135);
     jPanelSpecialFunctions.setBorder(BorderFactory.createTitledBorder("Spezielle Register"));    
     getContentPane().add(jPanelSpecialFunctions);
     
     jPanelLaufzeit = new JPanel();
-    jPanelLaufzeit.setBounds(0, 470, 153, 68);
+    jPanelLaufzeit.setBounds(0, 450, 153, 88);
     jPanelLaufzeit.setBorder(BorderFactory.createTitledBorder("Laufzeit"));    
     getContentPane().add(jPanelLaufzeit);
     
-    jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
+    jScrollPaneDataStorage.setViewportView(jPanelDataStorage);
+    
+    jPanelQuarzfrequenz = new JPanel();
+    jPanelQuarzfrequenz.setBounds(153, 450, 154, 88);
+    jPanelQuarzfrequenz.setBorder(BorderFactory.createTitledBorder("Quarzfrequenz"));    
+    getContentPane().add(jPanelQuarzfrequenz);
+    
+    String[] quarzFrequenzen = {"1000000 MHz", "2000000 MHz", "3000000 MHz", "4000000 MHz", "5000000 MHz", "6000000 MHz", "8000000 MHz", "10000000 MHz"};
+    
+    jComboBoxQuarzFrequenzen = new JComboBox(quarzFrequenzen);
+    jComboBoxQuarzFrequenzen.setPreferredSize(new Dimension(120, 20));
+    jComboBoxQuarzFrequenzen.setSelectedItem("4000000 MHz");
+    jPanelQuarzfrequenz.add(jComboBoxQuarzFrequenzen);
+    
+    jScrollPaneDataStorage.setViewportView(jPanelDataStorage);  
     
   }
   
@@ -345,6 +389,13 @@ public class MainFrame extends JFrame {
     
   }
   
+  public void jButtonZurücksetzen_ActionPerformed(ActionEvent evt) {
+    
+    jLabelLaufzeit.setText("0");
+    steuerung.setLaufzeit(0);
+    
+  }
+  
   public void jButtonStop_ActionPerformed(ActionEvent evt) {
     
     
@@ -359,7 +410,7 @@ public class MainFrame extends JFrame {
       executionWorker.cancel(true);
       jButtonStart.setEnabled(true);
       steuerung.getDataStorage().resetDataStoragePowerOn();
-      updateDataStorage();
+      updateElements();
       automaticTableScroll();
       
     } 
@@ -367,7 +418,7 @@ public class MainFrame extends JFrame {
     if (loadedFile) {
       
       steuerung.getDataStorage().resetDataStoragePowerOn();
-      updateDataStorage();
+      updateElements();
       automaticTableScroll();
       
     } 
@@ -517,7 +568,7 @@ public class MainFrame extends JFrame {
             int hexString = Integer.parseInt(newValue, 16);
             steuerung.getDataStorage().setValue(registerAdress, hexString);
             jTextFieldDummy.setText(newValue);
-            updateDataStorage();
+            updateElements();
             automaticTableScroll();
             return;
             
@@ -532,12 +583,13 @@ public class MainFrame extends JFrame {
     }
   }
   
-  public void updateDataStorage(){
+  public void updateElements(){
     
     jLabelWRegisterValue.setText(Integer.toHexString(steuerung.getWRegister().getValue()));
     jLabelPCLValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(2)));
     jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
     jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
+    jLabelLaufzeit.setText(Integer.toString(steuerung.getLaufzeit()));
     
     for (int i = 0;i<256;i++) {
       
@@ -678,7 +730,7 @@ public class MainFrame extends JFrame {
         steuerung.getParser().parse(inputVerzFile);
         createTable();
         steuerung.getDataStorage().resetDataStoragePowerOn();
-        updateDataStorage();
+        updateElements();
         automaticTableScroll();
         loadedFile = true;
         
