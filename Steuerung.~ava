@@ -9,15 +9,19 @@ public class Steuerung {
   private WRegister wRegister;
   private Stack stack;
   private int laufzeit;
+  private int quarzFrequenz = 0;
   
   public Steuerung() {
+    
+    laufzeit = 0; // in microSekunden  
+    quarzFrequenz = 4000000; //in Hz
     
     Steuerung s = this;
     dataStorage = new DataStorage();
     parser = new Parser(this);
     wRegister = new WRegister();
     stack = new Stack();
-    laufzeit = 0;
+    
     
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -27,6 +31,12 @@ public class Steuerung {
     });
   }
   
+  public void setQuarzFrequenz(int aQuarzFrequenz) {
+    
+    quarzFrequenz = aQuarzFrequenz;
+    
+  }
+  
   public void setLaufzeit(int aLaufzeit) {
     
     laufzeit = aLaufzeit;
@@ -34,7 +44,7 @@ public class Steuerung {
   }
   
   public int getLaufzeit() {
-   
+    
     return laufzeit;
     
   }
@@ -57,8 +67,9 @@ public class Steuerung {
       
     } 
     
+    laufzeit += (c.getMachineCycles() * 4) / (quarzFrequenz / 1000000);
     dataStorage.setProgrammCounter(newProgrammCounter);
-    mainFrame.updateDataStorage();
+    mainFrame.updateElements();
     
   }
   
@@ -87,7 +98,7 @@ public class Steuerung {
         
       }
       
-      mainFrame.updateDataStorage(); 
+      mainFrame.updateElements(); 
       
     } 
     
