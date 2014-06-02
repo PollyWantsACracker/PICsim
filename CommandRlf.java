@@ -29,7 +29,7 @@ public class CommandRlf extends Command{
       
     } 
     
-    int newValue = (actualFValue << 8);
+    int newValue = (actualFValue << 1);
     int bitBeforeCarry = actualFValue & 0x80;
     
     if (bitBeforeCarry == 0 && checkCarry()) {
@@ -47,19 +47,26 @@ public class CommandRlf extends Command{
       
     } 
     
+    if (newValue > 255) {
+      
+      newValue -= 256;
+      setCarry(true);
+      
+    } 
+    
     if (parameter2 == 0) { // Ergebnis in W
       
-      wRegister.setValue(actualFValue);
+      wRegister.setValue(newValue);
       
     } else { // Ergebnis in F
       
       if (parameter1 == 0) { // indirekte Adressierung
         
-        dataStorage.setValue(registerIndex, actualFValue);
+        dataStorage.setValue(registerIndex, newValue);
         
       } else { // direkte Adressierung
         
-        dataStorage.setValue(getBankOffset() + parameter1, actualFValue);
+        dataStorage.setValue(getBankOffset() + parameter1, newValue);
         
       } 
     }

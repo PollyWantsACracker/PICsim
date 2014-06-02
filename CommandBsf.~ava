@@ -28,7 +28,7 @@ public class CommandBsf extends Command {
       actualValue = dataStorage.getValue(getBankOffset() + parameter1);
       
     } 
-
+    
     int newValue = actualValue | (1 << parameter2);
     
     if (parameter1 == 0) { // indirekte Adressierung
