@@ -73,7 +73,7 @@ public abstract class Command {
   
   public int getBankOffset() {
     
-    if ((dataStorage.getValue(3) & 0x16) == 16) { 
+    if ((dataStorage.getValue(3) & 0x20) == 32) { 
       
       return 128;
       

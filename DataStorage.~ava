@@ -15,6 +15,19 @@ public class DataStorage {
     
   }
   
+  public int getProgrammCounter() {
+
+    return dataStorage[2];
+    
+  }
+  
+  public void setProgrammCounter(int newProgrammCounter) {
+    
+    dataStorage[130] = newProgrammCounter;
+    dataStorage[2] = newProgrammCounter;
+    
+  }
+  
   public void setValue(int index, int value) {
     
     if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar

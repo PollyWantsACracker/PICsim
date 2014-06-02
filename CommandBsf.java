@@ -29,7 +29,7 @@ public class CommandBsf extends Command {
       
     } 
     
-    int newValue = actualValue | ((int)(Math.pow(2, parameter2)));
+    int newValue = actualValue | (1 << parameter2);
     
     if (parameter1 == 0) { // indirekte Adressierung
       

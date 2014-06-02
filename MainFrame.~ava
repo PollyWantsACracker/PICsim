@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import java.awt.event.KeyEvent;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +26,15 @@ public class MainFrame extends JFrame {
   private String[] columnHeaders;
   private Object[][] tableData;
   
+  private JLabel jLabelWRegister;
+  private JLabel jLabelWRegisterValue;
+  private JLabel jLabelFSR;
+  private JLabel jLabelFSRValue;
+  private JLabel jLabelPCL;
+  private JLabel jLabelPCLValue;
+  private JLabel jLabelStatus;
+  private JLabel jLabelStatusValue;
+  
   private JMenuBar jMenuBar;
   private JMenu jMenuFile;
   private JMenu jMenuInfo;
@@ -36,10 +46,18 @@ public class MainFrame extends JFrame {
   private JScrollPane jScrollPaneSourceCode;
   private JPanel jPanelDataStorage;
   private JPanel jPanelSteuerpult;
+  private JPanel jPanelSpecialFunctions;
+  private JPanel jPanelLaufzeit;
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
   private JButton jButtonOneStep = new JButton();
+  private JButton jButtonStop = new JButton();
   private JTable jTableSourceCode;
+  
+  private AbstractAction resetButtonPressed;
+  private AbstractAction startButtonPressed;
+  private AbstractAction oneStepButtonPressed;
+  private AbstractAction stopButtonPressed;
   
   public MainFrame(String title, Steuerung aSteuerung) { 
     
@@ -67,23 +85,121 @@ public class MainFrame extends JFrame {
     initMenueBar();
     initScrollPanes();
     initPanels();
+    initButtonPressedEvents();
     initButtons();
     initDataStorage();
+    initLabels();
     
     setVisible(true);
     
   }
   
+  private void initLabels() {
+    
+    jLabelWRegister = new JLabel();
+    jLabelWRegister.setPreferredSize(new Dimension(67, 20));
+    jLabelWRegister.setHorizontalAlignment(SwingConstants.LEFT);
+    jLabelWRegister.setText("W-Register:");
+    jPanelSpecialFunctions.add(jLabelWRegister);
+    
+    jLabelWRegisterValue = new JLabel();
+    jLabelWRegisterValue.setPreferredSize(new Dimension(60, 20));
+    jLabelWRegisterValue.setText("0");
+    jLabelWRegisterValue.setHorizontalAlignment(SwingConstants.RIGHT);
+    jPanelSpecialFunctions.add(jLabelWRegisterValue);
+    
+    jLabelFSR = new JLabel();
+    jLabelFSR.setPreferredSize(new Dimension(25, 20));
+    jLabelFSR.setHorizontalAlignment(SwingConstants.LEFT);
+    jLabelFSR.setText("FSR:");
+    jPanelSpecialFunctions.add(jLabelFSR);
+    
+    jLabelFSRValue = new JLabel();
+    jLabelFSRValue.setPreferredSize(new Dimension(103, 20));
+    jLabelFSRValue.setHorizontalAlignment(SwingConstants.RIGHT);
+    jLabelFSRValue.setText("0");
+    jPanelSpecialFunctions.add(jLabelFSRValue);
+    
+    jLabelPCL = new JLabel();
+    jLabelPCL.setPreferredSize(new Dimension(26, 20));
+    jLabelPCL.setHorizontalAlignment(SwingConstants.LEFT);
+    jLabelPCL.setText("PCL:");
+    jPanelSpecialFunctions.add(jLabelPCL);
+    
+    jLabelPCLValue = new JLabel();
+    jLabelPCLValue.setPreferredSize(new Dimension(102, 20));
+    jLabelPCLValue.setHorizontalAlignment(SwingConstants.RIGHT);
+    jLabelPCLValue.setText("0");
+    jPanelSpecialFunctions.add(jLabelPCLValue);
+    
+    jLabelStatus = new JLabel();
+    jLabelStatus.setPreferredSize(new Dimension(49, 20));
+    jLabelStatus.setHorizontalAlignment(SwingConstants.LEFT);
+    jLabelStatus.setText("STATUS:");
+    jPanelSpecialFunctions.add(jLabelStatus);
+    
+    jLabelStatusValue = new JLabel();
+    jLabelStatusValue.setPreferredSize(new Dimension(79, 20));
+    jLabelStatusValue.setHorizontalAlignment(SwingConstants.RIGHT);
+    jLabelStatusValue.setText("0");
+    jPanelSpecialFunctions.add(jLabelStatusValue);
+    
+  }
+  
+  private void initButtonPressedEvents() {
+    
+    resetButtonPressed = new AbstractAction() {
+      
+      public void actionPerformed(ActionEvent e) {
+        
+        jButtonReset_ActionPerformed(e);
+        
+      }
+      
+    };
+    
+    startButtonPressed = new AbstractAction() {
+      
+      public void actionPerformed(ActionEvent e) {
+        
+        jButtonStart_ActionPerformed(e);
+        
+      }
+      
+    };
+    
+    oneStepButtonPressed = new AbstractAction() {
+      
+      public void actionPerformed(ActionEvent e) {
+        
+        jButtonOneStep_ActionPerformed(e);
+        
+      }
+      
+    };
+    
+    stopButtonPressed = new AbstractAction() {
+      
+      public void actionPerformed(ActionEvent e) {
+        
+        jButtonStop_ActionPerformed(e);
+        
+      }
+      
+    };
+    
+  }
+  
   public boolean getRunning() {
-   
+    
     return running;
     
   }
   
   private void initButtons() {
     
-    jButtonReset.setPreferredSize(new Dimension(100, 25));
-    jButtonReset.setText("Reset");
+    jButtonReset.setPreferredSize(new Dimension(110, 25));
+    jButtonReset.setText("Reset (F1)");
     
     jButtonReset.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
@@ -91,10 +207,12 @@ public class MainFrame extends JFrame {
       }
     });
     
+    jButtonReset.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1,0), "F1_pressed");
+    jButtonReset.getActionMap().put("F1_pressed", resetButtonPressed);
     jPanelSteuerpult.add(jButtonReset);
     
-    jButtonStart.setPreferredSize(new Dimension(100, 25));
-    jButtonStart.setText("Start");
+    jButtonStart.setPreferredSize(new Dimension(110, 25));
+    jButtonStart.setText("Start (F2)");
     
     jButtonStart.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
@@ -102,10 +220,13 @@ public class MainFrame extends JFrame {
       }
     });
     
+    
+    jButtonStart.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2,0), "F2_pressed");
+    jButtonStart.getActionMap().put("F2_pressed", startButtonPressed);
     jPanelSteuerpult.add(jButtonStart);
     
-    jButtonOneStep.setPreferredSize(new Dimension(100, 25));
-    jButtonOneStep.setText("OneStep");
+    jButtonOneStep.setPreferredSize(new Dimension(110, 25));
+    jButtonOneStep.setText("OneStep (F3)");
     
     jButtonOneStep.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
@@ -113,7 +234,22 @@ public class MainFrame extends JFrame {
       }
     });
     
+    jButtonOneStep.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3,0), "F3_pressed");
+    jButtonOneStep.getActionMap().put("F3_pressed", oneStepButtonPressed);
     jPanelSteuerpult.add(jButtonOneStep);
+    
+    jButtonStop.setPreferredSize(new Dimension(110, 25));
+    jButtonStop.setText("Stop (F4)");
+    
+    jButtonStop.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonStop_ActionPerformed(evt);
+      }
+    });
+    
+    jButtonStop.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4,0), "F4_pressed");
+    jButtonStop.getActionMap().put("F4_pressed", stopButtonPressed);
+    jPanelSteuerpult.add(jButtonStop);
     
   }
   
@@ -123,9 +259,19 @@ public class MainFrame extends JFrame {
     jPanelDataStorage.setPreferredSize(new Dimension(525, 520));
     
     jPanelSteuerpult = new JPanel();
-    jPanelSteuerpult.setBounds(0, 315, 130, 125);
+    jPanelSteuerpult.setBounds(0, 315, 153, 155);
     jPanelSteuerpult.setBorder(BorderFactory.createTitledBorder("Steuerpult"));
     getContentPane().add(jPanelSteuerpult);
+    
+    jPanelSpecialFunctions = new JPanel();
+    jPanelSpecialFunctions.setBounds(153, 315, 154, 155);
+    jPanelSpecialFunctions.setBorder(BorderFactory.createTitledBorder("Spezielle Register"));    
+    getContentPane().add(jPanelSpecialFunctions);
+    
+    jPanelLaufzeit = new JPanel();
+    jPanelLaufzeit.setBounds(0, 470, 153, 68);
+    jPanelLaufzeit.setBorder(BorderFactory.createTitledBorder("Laufzeit"));    
+    getContentPane().add(jPanelLaufzeit);
     
     jScrollPaneDataStorage.setViewportView(jPanelDataStorage); 
     
@@ -199,6 +345,12 @@ public class MainFrame extends JFrame {
     
   }
   
+  public void jButtonStop_ActionPerformed(ActionEvent evt) {
+    
+    
+    
+  }
+  
   public void jButtonReset_ActionPerformed(ActionEvent evt) {
     
     if (loadedFile && running) {
@@ -206,14 +358,16 @@ public class MainFrame extends JFrame {
       running = false; 
       executionWorker.cancel(true);
       jButtonStart.setEnabled(true);
+      steuerung.getDataStorage().resetDataStoragePowerOn();
+      updateDataStorage();
       automaticTableScroll();
       
     } 
     
-    steuerung.setProgrammCounter(0);
-    
     if (loadedFile) {
       
+      steuerung.getDataStorage().resetDataStoragePowerOn();
+      updateDataStorage();
       automaticTableScroll();
       
     } 
@@ -230,7 +384,7 @@ public class MainFrame extends JFrame {
       
     }  
   }
-
+  
   public void jButtonOneStep_ActionPerformed(ActionEvent evt) {
     
     if (loadedFile) {
@@ -240,7 +394,7 @@ public class MainFrame extends JFrame {
       
     } 
   }
-
+  
   private void initDataStorage() {
     
     for (int i = 0; i < 17; i++ ) {
@@ -354,9 +508,17 @@ public class MainFrame extends JFrame {
             
           } else {
             
+            if (!loadedFile) {
+              
+              return;
+              
+            } 
+            
             int hexString = Integer.parseInt(newValue, 16);
             steuerung.getDataStorage().setValue(registerAdress, hexString);
             jTextFieldDummy.setText(newValue);
+            updateDataStorage();
+            automaticTableScroll();
             return;
             
           } 
@@ -372,20 +534,15 @@ public class MainFrame extends JFrame {
   
   public void updateDataStorage(){
     
+    jLabelWRegisterValue.setText(Integer.toHexString(steuerung.getWRegister().getValue()));
+    jLabelPCLValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(2)));
+    jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
+    jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
+    
     for (int i = 0;i<256;i++) {
       
-      int oldValue = Integer.parseInt(jTextFieldDataStorage[i].getText(),16);
+      jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));        
       
-      if (steuerung.getDataStorage().getValue(i) != oldValue) {
-        
-        jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));
-        jTextFieldDataStorage[i].setBackground(Color.YELLOW);
-        
-      } else {
-        
-        jTextFieldDataStorage[i].setBackground(Color.WHITE);
-        
-      } 
     } 
   }
   
@@ -479,9 +636,9 @@ public class MainFrame extends JFrame {
     
   }
   
-  private void automaticTableScroll() {
+  public void automaticTableScroll() { // nur für den OneStep-Mode
     
-    int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getProgrammCounter());
+    int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getDataStorage().getProgrammCounter());
     jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
     jTableSourceCode.repaint();
     
@@ -522,6 +679,7 @@ public class MainFrame extends JFrame {
         createTable();
         steuerung.getDataStorage().resetDataStoragePowerOn();
         updateDataStorage();
+        automaticTableScroll();
         loadedFile = true;
         
       } catch(Exception e) {

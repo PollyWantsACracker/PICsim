@@ -298,7 +298,7 @@ public class Parser {
         
         case 4096: //BCF
         mask = "0380";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        maskedValue = (commandCode & Integer.parseInt(mask, 16)) >> 7;
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
@@ -309,7 +309,7 @@ public class Parser {
         
         case 5120: //BSF
         mask = "0380";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        maskedValue = (commandCode & Integer.parseInt(mask, 16)) >> 7;
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
@@ -320,7 +320,7 @@ public class Parser {
         
         case 6144: //BTFSC
         mask = "0380";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        maskedValue = (commandCode & Integer.parseInt(mask, 16)) >> 7;
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);
@@ -331,7 +331,7 @@ public class Parser {
         
         case 7168: //BTFSS
         mask = "0380";
-        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        maskedValue = (commandCode & Integer.parseInt(mask, 16)) >> 7;
         parameter2 = maskedValue;
         mask = "007F";
         maskedValue = commandCode & Integer.parseInt(mask, 16);

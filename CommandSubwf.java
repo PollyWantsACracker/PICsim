@@ -30,7 +30,7 @@ public class CommandSubwf extends Command {
       
     }
     
-    actualFValue = (actualFValue ^ 0xff) + 1; // Zweierkomplement
+    actualWValue = (actualWValue ^ 0xff) + 1; // Zweierkomplement
     
     int lowWValue = actualWValue & 0x0f;
     int lowFValue = actualFValue & 0x0f;
@@ -67,7 +67,6 @@ public class CommandSubwf extends Command {
       
     } 
     
-    newValue = (newValue - 1) ^ 0xff;
     
     if (parameter2 == 0) { // Ergebnis in W 
       

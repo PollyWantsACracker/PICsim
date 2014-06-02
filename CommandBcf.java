@@ -29,7 +29,7 @@ public class CommandBcf extends Command {
       
     } 
     
-    int newValue = actualValue & ((int)(Math.pow(2, parameter2)) ^ 0xFF);
+    int newValue = actualValue & ~(1 << parameter2);
     
     if (parameter1 == 0) { // indirekte Adressierung
       

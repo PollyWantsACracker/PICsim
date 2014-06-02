@@ -29,7 +29,7 @@ public class CommandBtfsc extends Command {
       
     }
     
-    if ((actualValue & (int)(Math.pow(2, parameter2))) == 0) {
+    if ((actualValue & (1 << parameter2)) == 0) {
       
       this.machineCycles = 2;
       return -2;

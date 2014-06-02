@@ -37,7 +37,7 @@ public class MyTable extends JTable {
         
         int hexValue = Integer.parseInt(cellText, 16);
         
-        if (hexValue == steuerung.getProgrammCounter()) {
+        if (hexValue == steuerung.getDataStorage().getProgrammCounter()) {
           
           cellLabel.setBackground(Color.YELLOW);
           repaint(); // unbedingt notwendig, da sonst Fehler in der Darstellung der Tabelle auftreten

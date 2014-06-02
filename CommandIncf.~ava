@@ -41,6 +41,10 @@ public class CommandIncf extends Command {
       
       setZero(true);
       
+    } else {
+      
+      setZero(false);
+      
     } 
     
     if (parameter2 == 0) { // Ergebnis in W
