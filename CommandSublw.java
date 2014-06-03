@@ -10,7 +10,6 @@ public class CommandSublw extends Command {
     
     int actualWValue = wRegister.getValue();
     int actualFValue = parameter1;
-    int registerIndex = 0;
     
     actualWValue = (actualWValue ^ 0xff) + 1; // Zweierkomplement
     
@@ -48,7 +47,7 @@ public class CommandSublw extends Command {
       setZero(false);
       
     } 
-
+    
     wRegister.setValue(newValue); 
     
     return -1;
