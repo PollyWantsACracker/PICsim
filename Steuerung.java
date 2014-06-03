@@ -71,7 +71,6 @@ public class Steuerung {
     
     laufzeit += (c.getMachineCycles() * 4) / (quarzFrequenz / 1000000);
     dataStorage.setProgrammCounter(newProgrammCounter);
-    mainFrame.updateElements();
     
   }
   
