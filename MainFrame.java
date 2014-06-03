@@ -83,6 +83,8 @@ public class MainFrame extends JFrame {
     loadedFile = false;
     
     steuerung = aSteuerung;
+    
+    
     jLabelDataStorage = new JLabel[48];
     jTextFieldDataStorage = new JTextField[256];
     
@@ -402,21 +404,19 @@ public class MainFrame extends JFrame {
     if (loadedFile && steuerung.getRunning()) {
       
       steuerung.setRunning(false);
-      executionWorker.cancel(true);
-      executionWorker = null;
       steuerung.getDataStorage().resetDataStoragePowerOn();
-      updateElements();
-      automaticTableScroll();
       
     } 
     
     if (loadedFile && !steuerung.getRunning()) {
       
       steuerung.getDataStorage().resetDataStoragePowerOn();
-      updateElements();
-      automaticTableScroll();
       
     } 
+    
+    updateElements();
+    automaticTableScroll();
+    
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
@@ -424,7 +424,7 @@ public class MainFrame extends JFrame {
     if (loadedFile && !steuerung.getRunning()) {
       
       steuerung.setRunning(true);
-      executionWorker = new ExecutionWorker(steuerung);
+      executionWorker = new ExecutionWorker(steuerung, this);
       executionWorker.execute();
       
     }  
@@ -435,6 +435,7 @@ public class MainFrame extends JFrame {
     if (loadedFile) {
       
       steuerung.executeOneCommand();
+      updateElements();
       automaticTableScroll();
       
     } 

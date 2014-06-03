@@ -446,7 +446,7 @@ public class Parser {
         maskedValue = commandCode & Integer.parseInt(mask, 16);
         parameter1 = maskedValue;
         machineCycles = 1;
-        commandList.add(new CommandAddlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
+        commandList.add(new CommandSublw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
         continue;
         
         default:
