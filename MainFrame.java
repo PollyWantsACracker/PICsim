@@ -16,7 +16,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class MainFrame extends JFrame {
   
-  private boolean running;
   private boolean loadedFile;
   
   private Steuerung steuerung;
@@ -82,7 +81,6 @@ public class MainFrame extends JFrame {
     this.setIconImage(Toolkit.getDefaultToolkit().getImage("Images/favicon.png"));
     
     loadedFile = false;
-    running = false;
     
     steuerung = aSteuerung;
     jLabelDataStorage = new JLabel[48];
@@ -206,12 +204,6 @@ public class MainFrame extends JFrame {
       }
       
     };
-    
-  }
-  
-  public boolean getRunning() {
-    
-    return running;
     
   }
   
@@ -398,25 +390,27 @@ public class MainFrame extends JFrame {
   
   public void jButtonStop_ActionPerformed(ActionEvent evt) {
     
-    steuerung.setRunning(false);
-    jButtonStart.setEnabled(true);
-    
+    if (loadedFile && steuerung.getRunning()) {
+      
+      steuerung.setRunning(false);
+      
+    } 
   }
   
   public void jButtonReset_ActionPerformed(ActionEvent evt) {
     
-    if (loadedFile && running) {
+    if (loadedFile && steuerung.getRunning()) {
       
-      running = false; 
+      steuerung.setRunning(false);
       executionWorker.cancel(true);
-      jButtonStart.setEnabled(true);
+      executionWorker = null;
       steuerung.getDataStorage().resetDataStoragePowerOn();
       updateElements();
       automaticTableScroll();
       
     } 
     
-    if (loadedFile) {
+    if (loadedFile && !steuerung.getRunning()) {
       
       steuerung.getDataStorage().resetDataStoragePowerOn();
       updateElements();
@@ -426,11 +420,10 @@ public class MainFrame extends JFrame {
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
-    steuerung.setRunning(true);
-    if (loadedFile) {
+    
+    if (loadedFile && !steuerung.getRunning()) {
       
-      jButtonStart.setEnabled(false);
-      running = true;
+      steuerung.setRunning(true);
       executionWorker = new ExecutionWorker(steuerung);
       executionWorker.execute();
       
