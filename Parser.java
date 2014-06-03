@@ -442,8 +442,11 @@ public class Parser {
         continue;
         
         case 15360: //SUBLW
+        mask = "00FF";
+        maskedValue = commandCode & Integer.parseInt(mask, 16);
+        parameter1 = maskedValue;
         machineCycles = 1;
-        // fehlt!
+        commandList.add(new CommandAddlw(programmCounterLine, parameter1, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
         continue;
         
         default:
