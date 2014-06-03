@@ -398,7 +398,8 @@ public class MainFrame extends JFrame {
   
   public void jButtonStop_ActionPerformed(ActionEvent evt) {
     
-    
+    steuerung.setRunning(false);
+    jButtonStart.setEnabled(true);
     
   }
   
@@ -425,7 +426,7 @@ public class MainFrame extends JFrame {
   }
   
   public void jButtonStart_ActionPerformed(ActionEvent evt) {
-    
+    steuerung.setRunning(true);
     if (loadedFile) {
       
       jButtonStart.setEnabled(false);

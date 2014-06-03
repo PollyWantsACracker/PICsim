@@ -13,8 +13,11 @@ class ExecutionWorker extends SwingWorker<Integer, Integer> {
   
   protected Integer doInBackground() throws Exception {
     
+    while (steuerung.getRunning()) { 
+      steuerung.executeOneCommand();
+      steuerung.getMainFrame().automaticTableScroll();
+    }
     
-    steuerung.executeCommands();
     return 0;
     
   }

@@ -10,13 +10,14 @@ public class Steuerung {
   private Stack stack;
   private int laufzeit;
   private int quarzFrequenz = 0;
+  private boolean running = true;
   
   public Steuerung() {
     
     laufzeit = 0; // in microSekunden  
     quarzFrequenz = 4000000; //in Hz
     
-    Steuerung s = this;
+    final Steuerung s = this;
     dataStorage = new DataStorage();
     parser = new Parser(this);
     wRegister = new WRegister();
@@ -127,4 +128,22 @@ public class Steuerung {
     return stack;
     
   }  
+  
+  public boolean getRunning() {
+    
+    return running;
+    
+  }
+  
+  public void setRunning(boolean aRunning) {
+    
+    running = aRunning;
+    
+  }
+  
+  public MainFrame getMainFrame() {
+    
+    return mainFrame;
+    
+  }
 }
