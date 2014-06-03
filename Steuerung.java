@@ -10,12 +10,13 @@ public class Steuerung {
   private Stack stack;
   private int laufzeit;
   private int quarzFrequenz = 0;
-  private boolean running = true;
+  private boolean running;
   
   public Steuerung() {
     
     laufzeit = 0; // in microSekunden  
     quarzFrequenz = 4000000; //in Hz
+    running = false;
     
     final Steuerung s = this;
     dataStorage = new DataStorage();
@@ -71,37 +72,6 @@ public class Steuerung {
     laufzeit += (c.getMachineCycles() * 4) / (quarzFrequenz / 1000000);
     dataStorage.setProgrammCounter(newProgrammCounter);
     mainFrame.updateElements();
-    
-  }
-  
-  
-  public void executeCommands() {
-    
-    int programmCounter = 0;
-    int newProgrammCounter = 0;
-    
-    while (mainFrame.getRunning()) { 
-      
-      Command c = parser.getCommand(programmCounter);
-      newProgrammCounter = c.executeCommand();
-      
-      if (newProgrammCounter == -1) {
-        
-        programmCounter += 1;
-        
-      } else if (newProgrammCounter == -2){
-        
-        programmCounter += 2;
-        
-      } else {
-        
-        programmCounter = newProgrammCounter;
-        
-      }
-      
-      mainFrame.updateElements(); 
-      
-    } 
     
   }
   
