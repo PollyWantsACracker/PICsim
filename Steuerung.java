@@ -8,13 +8,13 @@ public class Steuerung {
   private DataStorage dataStorage;
   private WRegister wRegister;
   private Stack stack;
-  private int laufzeit;
+  private double laufzeit;
   private int quarzFrequenz = 0;
   private boolean running;
   
   public Steuerung() {
     
-    laufzeit = 0; // in microSekunden  
+    laufzeit = 0.0; // in microSekunden  
     quarzFrequenz = 4000000; //in Hz
     running = false;
     
@@ -39,13 +39,13 @@ public class Steuerung {
     
   }
   
-  public void setLaufzeit(int aLaufzeit) {
+  public void setLaufzeit(double aLaufzeit) {
     
     laufzeit = aLaufzeit;
     
   }
   
-  public int getLaufzeit() {
+  public double getLaufzeit() {
     
     return laufzeit;
     
@@ -69,7 +69,7 @@ public class Steuerung {
       
     } 
     
-    laufzeit += (c.getMachineCycles() * 4) / (quarzFrequenz / 1000000);
+    laufzeit += (c.getMachineCycles() * 4) / ((mainFrame.getActualQuarzFrequence()) / 1000000.0);
     dataStorage.setProgrammCounter(newProgrammCounter);
     
   }

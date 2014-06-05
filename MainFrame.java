@@ -154,7 +154,7 @@ public class MainFrame extends JFrame {
     jLabelLaufzeit = new JLabel();
     jLabelLaufzeit.setPreferredSize(new Dimension(60, 20));
     jLabelLaufzeit.setHorizontalAlignment(SwingConstants.RIGHT);
-    jLabelLaufzeit.setText(Integer.toString(steuerung.getLaufzeit()));
+    jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
     jPanelLaufzeit.add(jLabelLaufzeit);
     
     jLabelLaufzeitEinheit = new JLabel();
@@ -304,7 +304,7 @@ public class MainFrame extends JFrame {
     jPanelQuarzfrequenz.setBorder(BorderFactory.createTitledBorder("Quarzfrequenz"));    
     getContentPane().add(jPanelQuarzfrequenz);
     
-    String[] quarzFrequenzen = {"1000000 MHz", "2000000 MHz", "3000000 MHz", "4000000 MHz", "5000000 MHz", "6000000 MHz", "8000000 MHz", "10000000 MHz"};
+    String[] quarzFrequenzen = {"1000000", "2000000", "3000000", "4000000", "5000000", "6000000", "8000000", "10000000"};
     
     jComboBoxQuarzFrequenzen = new JComboBox(quarzFrequenzen);
     jComboBoxQuarzFrequenzen.setPreferredSize(new Dimension(120, 20));
@@ -584,7 +584,7 @@ public class MainFrame extends JFrame {
     jLabelPCLValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(2)));
     jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
     jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
-    jLabelLaufzeit.setText(Integer.toString(steuerung.getLaufzeit()));
+    jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
     
     for (int i = 0;i<256;i++) {
       
@@ -773,4 +773,11 @@ public class MainFrame extends JFrame {
       
     }
   }
+  
+  public int getActualQuarzFrequence() {
+    
+    return Integer.parseInt((String)jComboBoxQuarzFrequenzen.getSelectedItem());
+    
+  }  
+  
 }
