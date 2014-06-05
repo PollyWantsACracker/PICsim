@@ -11,12 +11,14 @@ public class Steuerung {
   private double laufzeit;
   private int quarzFrequenz = 0;
   private boolean running;
+  private boolean hold;
   
   public Steuerung() {
     
     laufzeit = 0.0; // in microSekunden  
     quarzFrequenz = 4000000; //in Hz
     running = false;
+    hold = false;
     
     final Steuerung s = this;
     dataStorage = new DataStorage();
@@ -55,6 +57,22 @@ public class Steuerung {
     
     int newProgrammCounter = 0;
     int actualProgrammCounter = dataStorage.getProgrammCounter();
+    
+    if (mainFrame.getBreakpoint(actualProgrammCounter)) {
+      
+      if (!hold) {
+        
+        hold = true;
+        running = false;
+        return;
+        
+      } else {
+        
+        hold = false;
+        
+      } // end of if-else
+      
+    } 
     
     Command c = parser.getCommand(actualProgrammCounter);
     newProgrammCounter = c.executeCommand();

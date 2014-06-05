@@ -165,6 +165,30 @@ public class MainFrame extends JFrame {
     
   }
   
+  public boolean getBreakpoint(int programmCounter) {
+  
+    
+    for (int i = 0; i < steuerung.getParser().getNumberOfLines() ; i++) {
+      
+      String tableProgrammCounter = tableData[i][1].toString();
+      
+      if (tableProgrammCounter.isEmpty()) {
+        
+        continue;
+        
+      } 
+      
+      if (Integer.parseInt(tableProgrammCounter, 16) == programmCounter) {
+        
+        return (boolean)tableData[i][0];
+        
+      } 
+      
+    } 
+    
+    return false;
+  }
+  
   private void initButtonPressedEvents() {
     
     resetButtonPressed = new AbstractAction() {
@@ -308,7 +332,7 @@ public class MainFrame extends JFrame {
     
     jComboBoxQuarzFrequenzen = new JComboBox(quarzFrequenzen);
     jComboBoxQuarzFrequenzen.setPreferredSize(new Dimension(120, 20));
-    jComboBoxQuarzFrequenzen.setSelectedItem("4000000 MHz");
+    jComboBoxQuarzFrequenzen.setSelectedItem("4000000");
     jPanelQuarzfrequenz.add(jComboBoxQuarzFrequenzen);
     
     jScrollPaneDataStorage.setViewportView(jPanelDataStorage);  

@@ -33,21 +33,33 @@ public class MyTable extends JTable {
       boolean breakPoint = (Boolean)this.getModel().getValueAt(row, 0); // Checkbox-Wert
       String cellText = (String)this.getModel().getValueAt(row, 1); // Befehls-ProgrammCounter
       
-      if (!cellText.equals("")) { // Färbung der Zeile von aktuellem ProgrammCounter
+      if (!cellText.equals("") && !breakPoint) { // Färbung der Zeile von aktuellem ProgrammCounter
         
         int hexValue = Integer.parseInt(cellText, 16);
         
         if (hexValue == steuerung.getDataStorage().getProgrammCounter()) {
           
           cellLabel.setBackground(Color.YELLOW);
+          cellLabel.setForeground(Color.BLACK);
           repaint(); // unbedingt notwendig, da sonst Fehler in der Darstellung der Tabelle auftreten
           return cellLabel;
           
         } 
         
-      } 
-      
-      
+      } else if (!cellText.equals("") && breakPoint) {
+        
+        int hexValue = Integer.parseInt(cellText, 16);
+        
+        if (hexValue == steuerung.getDataStorage().getProgrammCounter()) {
+          
+          cellLabel.setBackground(Color.GREEN);
+          cellLabel.setForeground(Color.BLACK);
+          repaint(); // unbedingt notwendig, da sonst Fehler in der Darstellung der Tabelle auftreten
+          return cellLabel;
+          
+        } 
+        
+      }
       if( breakPoint == false ) { // Breakpointdarstellung 
         
         cellLabel.setForeground(Color.BLACK);
