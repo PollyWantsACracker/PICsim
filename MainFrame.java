@@ -413,7 +413,7 @@ public class MainFrame extends JFrame {
   
   public void jButtonZurücksetzen_ActionPerformed(ActionEvent evt) {
     
-    jLabelLaufzeit.setText("0");
+    jLabelLaufzeit.setText("0.0");
     steuerung.setLaufzeit(0);
     
   }
@@ -707,6 +707,7 @@ public class MainFrame extends JFrame {
     jTableSourceCode.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
     jTableSourceCode.setFont(new Font("Arial", Font.BOLD, 12));
     jTableSourceCode.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    jTableSourceCode.setFocusable(false);
     
   }
   
