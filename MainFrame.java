@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.util.concurrent.locks.*;
 
 public class MainFrame extends JFrame {
   
@@ -64,6 +65,8 @@ public class MainFrame extends JFrame {
   private AbstractAction oneStepButtonPressed;
   private AbstractAction stopButtonPressed;
   
+  private Lock threadLock;
+  
   public MainFrame(String title, Steuerung aSteuerung) { 
     
     super(title);
@@ -83,6 +86,7 @@ public class MainFrame extends JFrame {
     loadedFile = false;
     
     steuerung = aSteuerung;
+    threadLock = new ReentrantLock();
     
     
     jLabelDataStorage = new JLabel[48];
@@ -166,7 +170,7 @@ public class MainFrame extends JFrame {
   }
   
   public boolean getBreakpoint(int programmCounter) {
-  
+    
     
     for (int i = 0; i < steuerung.getParser().getNumberOfLines() ; i++) {
       
@@ -604,15 +608,28 @@ public class MainFrame extends JFrame {
   
   public void updateElements(){
     
-    jLabelWRegisterValue.setText(Integer.toHexString(steuerung.getWRegister().getValue()));
-    jLabelPCLValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(2)));
-    jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
-    jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
-    jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
+    threadLock.lock();
     
-    for (int i = 0;i<256;i++) {
+    try {
       
-      jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));        
+      jLabelWRegisterValue.setText(Integer.toHexString(steuerung.getWRegister().getValue()));
+      jLabelPCLValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(2)));
+      jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
+      jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
+      jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
+      
+      for (int i = 0;i<256;i++) {
+        
+        jTextFieldDataStorage[i].setText(Integer.toHexString(steuerung.getDataStorage().getValue(i)));        
+        
+      } 
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      repaint();
+      threadLock.unlock();
       
     } 
   }
@@ -707,12 +724,23 @@ public class MainFrame extends JFrame {
     
   }
   
-  public void automaticTableScroll() { // nur für den OneStep-Mode
+  public void automaticTableScroll() {
     
-    int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getDataStorage().getProgrammCounter());
-    jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
-    jTableSourceCode.repaint();
+    threadLock.lock();
     
+    try {
+      
+      int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getDataStorage().getProgrammCounter());
+      jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      jTableSourceCode.repaint();
+      threadLock.unlock();
+      
+    } 
   }
   
   private void jMenuItemFileOpenActionPerformed(ActionEvent evt) {                                                  
