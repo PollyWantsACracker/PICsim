@@ -171,7 +171,6 @@ public class MainFrame extends JFrame {
   
   public boolean getBreakpoint(int programmCounter) {
     
-    
     for (int i = 0; i < steuerung.getParser().getNumberOfLines() ; i++) {
       
       String tableProgrammCounter = tableData[i][1].toString();
@@ -442,6 +441,7 @@ public class MainFrame extends JFrame {
       
     } 
     
+    steuerung.setHold(false);
     updateElements();
     automaticTableScroll();
     
@@ -533,6 +533,13 @@ public class MainFrame extends JFrame {
       
       String registerHexName = Integer.toHexString(Integer.parseInt(jTextFieldDummy.getName()));
       int registerAdress = Integer.parseInt(registerHexName, 16);
+      
+      if (registerAdress == 2 || registerAdress == 130) {
+        
+        steuerung.setHold(false);
+        
+      } 
+      
       String actualHexValue = Integer.toHexString(steuerung.getDataStorage().getValue(registerAdress));
       
       JPanel jPanelRegistervalueChange = new JPanel();
@@ -727,21 +734,10 @@ public class MainFrame extends JFrame {
   
   public void automaticTableScroll() {
     
-    threadLock.lock();
+    int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getDataStorage().getProgrammCounter());
+    jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
+    jTableSourceCode.repaint();
     
-    try {
-      
-      int index = steuerung.getParser().getCurrentCommandTableIndex(steuerung.getDataStorage().getProgrammCounter());
-      jTableSourceCode.scrollRectToVisible(jTableSourceCode.getCellRect(index, 0, true));
-      
-    } catch(Exception e) {
-      
-    } finally {
-      
-      jTableSourceCode.repaint();
-      threadLock.unlock();
-      
-    } 
   }
   
   private void jMenuItemFileOpenActionPerformed(ActionEvent evt) {                                                  
@@ -829,8 +825,20 @@ public class MainFrame extends JFrame {
   
   public int getActualQuarzFrequence() {
     
-    return Integer.parseInt((String)jComboBoxQuarzFrequenzen.getSelectedItem());
+    threadLock.lock();
+    int selectedItem = 0;
     
-  }  
-  
+    try {
+      
+      selectedItem = Integer.parseInt((String)jComboBoxQuarzFrequenzen.getSelectedItem());
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      threadLock.unlock();
+      return selectedItem;
+      
+    }
+  } 
 }

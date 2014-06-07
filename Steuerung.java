@@ -35,6 +35,12 @@ public class Steuerung {
     });
   }
   
+  public void setHold(boolean aHold) {
+  
+    hold = aHold;
+  
+  }
+  
   public void setQuarzFrequenz(int aQuarzFrequenz) {
     
     quarzFrequenz = aQuarzFrequenz;
@@ -60,7 +66,7 @@ public class Steuerung {
     
     if (mainFrame.getBreakpoint(actualProgrammCounter)) {
       
-      if (!hold) {
+      if (!hold) {     
         
         hold = true;
         running = false;
@@ -70,7 +76,7 @@ public class Steuerung {
         
         hold = false;
         
-      } // end of if-else
+      } 
       
     } 
     
