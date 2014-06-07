@@ -1,49 +1,77 @@
+import java.util.concurrent.locks.*;
+
 public class DataStorage {
   
   private int[] dataStorage;
+  private Lock threadLock;
   
   public DataStorage() {
     
     dataStorage = new int[256];
     initDataStorage();
+    threadLock = new ReentrantLock();
     
   }
   
   public int getValue(int index) {
     
-    return dataStorage[index];
+    int value = 0;
+    threadLock.lock();
     
+    try {
+      
+      value = dataStorage[index];
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      threadLock.unlock();
+      return value;
+      
+    } 
   }
   
   public int getProgrammCounter() {
-
-    return dataStorage[2];
+    
+    return getValue(2);
     
   }
   
   public void setProgrammCounter(int newProgrammCounter) {
     
-    dataStorage[130] = newProgrammCounter;
-    dataStorage[2] = newProgrammCounter;
+    setValue(130, newProgrammCounter);
+    setValue(2, newProgrammCounter);
     
   }
   
   public void setValue(int index, int value) {
     
-    if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar
-      
-      dataStorage[131] = value;
-      
-    }
+    threadLock.lock();
     
-    if (index == 131) { // siehe oben
+    try {
       
-      dataStorage[3] = value;
+      if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar
+        
+        dataStorage[131] = value;
+        
+      }
+      
+      if (index == 131) { // siehe oben
+        
+        dataStorage[3] = value;
+        
+      } 
+      
+      dataStorage[index] = value;
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      threadLock.unlock();
       
     } 
-    
-    dataStorage[index] = value;
-    
   }
   
   private void initDataStorage() {
@@ -58,119 +86,114 @@ public class DataStorage {
   
   public void resetDataStorageWDTInterrupt() { // WDT-Reset: Interrupt
     
-    dataStorage[0] = 0;
-    dataStorage[2] = dataStorage[2] + 1; // unvollständig
-    dataStorage[3] = 16 + (dataStorage[3] & 0xe7);
-    dataStorage[5] = dataStorage[5] & 0x1f;
-    dataStorage[10] = dataStorage[10] & 0x1f;
-    dataStorage[128] = 0;
-    dataStorage[130] = dataStorage[130] + 1; // unvollständig
-    dataStorage[131] = 16 + (dataStorage[131] & 0xe7);
-    dataStorage[133] = dataStorage[133] & 0x1f;
-    dataStorage[136] = dataStorage[136] & 0x0f;
-    dataStorage[137] = 0;
-    dataStorage[138] = dataStorage[138] & 0x1f;    
+    setValue(0, 0);
+    setValue(2, getValue(2) + 1); // unvollständig
+    setValue(3, 16 + (getValue(3) & 0xe7));
+    setValue(5, getValue(5) & 0x1f);
+    setValue(10, getValue(10) & 0x1f);
+    setValue(128, 0);
+    setValue(130, getValue(130) + 1); // unvollständig
+    setValue(133, getValue(133) & 0x1f);
+    setValue(136, getValue(136) & 0x0f);
+    setValue(137, 0);
+    setValue(138, getValue(138) & 0x1f); 
     
   }
   
   public void resetDataStorageWDTWakeUp() { // WDT-Reset: Wake Up
     
-    dataStorage[0] = 0;
-    dataStorage[2] = dataStorage[2] + 1;
-    dataStorage[3] = dataStorage[3] & 0xe7;
-    dataStorage[5] = dataStorage[5] & 0x1f;
-    dataStorage[10] = dataStorage[10] & 0x1f;
-    dataStorage[128] = 0;
-    dataStorage[130] = dataStorage[130] + 1;
-    dataStorage[131] = dataStorage[131] & 0xe7;
-    dataStorage[133] = dataStorage[133] & 0x1f;
-    dataStorage[136] = dataStorage[136] & 0x0f;
-    dataStorage[137] = 0;
-    dataStorage[138] = dataStorage[138] & 0x1f;    
+    setValue(0, 0);
+    setValue(2, getValue(2) + 1);
+    setValue(3, getValue(3) & 0xe7);
+    setValue(5, getValue(5) & 0x1f);
+    setValue(10, getValue(10) & 0x1f);
+    setValue(128, 0);
+    setValue(130, getValue(130) + 1);
+    setValue(133, getValue(133) & 0x1f);
+    setValue(136, getValue(136) & 0x0f);
+    setValue(137, 0);
+    setValue(138, getValue(138) & 0x1f);    
     
   }
   
   public void resetDataStorageWDTNormalOperation() { // WDT-Reset: normal Operation
     
-    dataStorage[0] = 0;
-    dataStorage[2] = 0;
-    dataStorage[3] = 8 + (dataStorage[3] & 0x07);
-    dataStorage[5] = dataStorage[5] & 0x1f;
-    dataStorage[10] = 0;
-    dataStorage[11] = dataStorage[11] & 0x01;
-    dataStorage[128] = 0;
-    dataStorage[129] = 255;
-    dataStorage[130] = 0;
-    dataStorage[131] = 8 + (dataStorage[131] & 0x07);
-    dataStorage[133] = 31;
-    dataStorage[134] = 255;
-    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
-    dataStorage[137] = 0;
-    dataStorage[138] = 0;
-    dataStorage[139] = dataStorage[139] & 0x01;   
+    setValue(0, 0);
+    setValue(2, 0); 
+    setValue(3, 8 + (getValue(3) & 0x07));
+    setValue(5, getValue(5) & 0x1f);
+    setValue(10, 0);  
+    setValue(11, getValue(11) & 0x01);
+    setValue(128, 0);  
+    setValue(129, 255);
+    setValue(130, 0); 
+    setValue(133, 31);
+    setValue(134, 255);
+    setValue(136, getValue(136) & 0x08); // Bedeutung von q nicht bekannt
+    setValue(137, 0);
+    setValue(138, 0);
+    setValue(139, getValue(139) & 0x01);
     
   }
   
   public void resetDataStorageSleep() { // !MCLR-Reset: Sleep
     
-    dataStorage[0] = 0;
-    dataStorage[2] = 0;
-    dataStorage[3] = 16 + (dataStorage[3] & 0x07);
-    dataStorage[5] = dataStorage[5] & 0x1f;
-    dataStorage[10] = 0;
-    dataStorage[11] = dataStorage[11] & 0x01;
-    dataStorage[128] = 0;
-    dataStorage[129] = 255;
-    dataStorage[130] = 0;
-    dataStorage[131] = 16 + (dataStorage[131] & 0x07);
-    dataStorage[133] = 31;
-    dataStorage[134] = 255;
-    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
-    dataStorage[137] = 0;
-    dataStorage[138] = 0;
-    dataStorage[139] = dataStorage[139] & 0x01;   
+    setValue(0, 0);
+    setValue(2, 0); 
+    setValue(3, 16 + (getValue(3) & 0x07));
+    setValue(5, getValue(5) & 0x1f);
+    setValue(10, 0);  
+    setValue(11, getValue(11) & 0x01);
+    setValue(128, 0);  
+    setValue(129, 255);
+    setValue(130, 0); 
+    setValue(133, 31);
+    setValue(134, 255);
+    setValue(136, getValue(136) & 0x08); // Bedeutung von q nicht bekannt
+    setValue(137, 0);
+    setValue(138, 0);
+    setValue(139, getValue(139) & 0x01);
+    
     
   }
   
   public void resetDataStorageNormalOperation() { // !MCLR-Reset: normal Operation
     
-    dataStorage[0] = 0;
-    dataStorage[2] = 0;
-    dataStorage[3] = dataStorage[3] & 0x1f;
-    dataStorage[5] = dataStorage[5] & 0x1f;
-    dataStorage[10] = 0;
-    dataStorage[11] = dataStorage[11] & 0x01;
-    dataStorage[128] = 0;
-    dataStorage[129] = 255;
-    dataStorage[130] = 0;
-    dataStorage[131] = dataStorage[131] & 0x1f;
-    dataStorage[133] = 31;
-    dataStorage[134] = 255;
-    dataStorage[136] = dataStorage[136] & 0x08; // Bedeutung von q nicht bekannt
-    dataStorage[137] = 0;
-    dataStorage[138] = 0;
-    dataStorage[139] = dataStorage[139] & 0x01;   
+    setValue(0, 0);
+    setValue(2, 0); 
+    setValue(3, getValue(3) & 0x1f);
+    setValue(5, getValue(5) & 0x1f);
+    setValue(10, 0);  
+    setValue(11, getValue(11) & 0x01);
+    setValue(128, 0);  
+    setValue(129, 255);
+    setValue(130, 0); 
+    setValue(133, 31);
+    setValue(134, 255);
+    setValue(136, getValue(136) & 0x08); // Bedeutung von q nicht bekannt
+    setValue(137, 0);
+    setValue(138, 0);
+    setValue(139, getValue(139) & 0x01); 
     
   }
   
   public void resetDataStoragePowerOn() { // Power-on Reset
     
-    dataStorage[0] = 0;  
-    dataStorage[2] = 0;  
-    dataStorage[3] = 24 + (dataStorage[3] & 0x07);  
-    dataStorage[5] = dataStorage[5] & 0x1f;  
-    dataStorage[10] = 0;  
-    dataStorage[11] = dataStorage[11] & 0x01;  
-    dataStorage[128] = 0;  
-    dataStorage[129] = 255;
-    dataStorage[130] = 0;  
-    dataStorage[131] = 24 + (dataStorage[131] & 0x07);
-    dataStorage[133] = 31;
-    dataStorage[134] = 255;
-    dataStorage[136] = dataStorage[136] & 0x08;
-    dataStorage[137] = 0;
-    dataStorage[138] = 0;
-    dataStorage[139] = dataStorage[139] & 0x01;
+    setValue(0, 0);  
+    setValue(2, 0);  
+    setValue(3, 24 + (getValue(3) & 0x07));  
+    setValue(5, getValue(5) & 0x1f);  
+    setValue(10, 0);  
+    setValue(11, getValue(11) & 0x01);  
+    setValue(128, 0);  
+    setValue(129, 255);
+    setValue(130, 0);  
+    setValue(133, 31);
+    setValue(134, 255);
+    setValue(136, getValue(136) & 0x08);
+    setValue(137, 0);
+    setValue(138, 0);
+    setValue(139, getValue(139) & 0x01);
     
   }
 }

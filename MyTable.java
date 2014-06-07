@@ -13,22 +13,25 @@ import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import java.util.concurrent.locks.*;
+
 
 public class MyTable extends JTable {
   
   private Steuerung steuerung; // wird benötigt, um den aktuellen ProgrammCounter zu bekommen
+  private Lock threadLock;
   
   public MyTable(MyTableModel myTableModel, Steuerung aSteuerung) {
     
     super(myTableModel);
     steuerung = aSteuerung;
+    threadLock = new ReentrantLock();
     
   }
   
   public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {  
     
-    Component cell = super.prepareRenderer(renderer, row, column);
-    cell.setFocusable(false);
+    Component cell = super.prepareRenderer(renderer, row, column); // aktuelle Tabellenzelle
     
     String programmCounterStr = this.getModel().getValueAt(row, 1).toString();
     int programmCounterValue = -1;
@@ -37,15 +40,32 @@ public class MyTable extends JTable {
       
       programmCounterValue = Integer.parseInt(programmCounterStr, 16);
       
-    } 
+    }
+    
+    Color background;
+    Color foreground; 
     
     if (programmCounterValue == -1) {
       
-      cell.setBackground(Color.WHITE);
-      cell.setForeground(Color.BLACK);
-      repaint();
-      return cell;
+      background = Color.WHITE;
+      foreground = Color.BLACK;
       
+      threadLock.lock();
+      
+      try {
+        
+        cell.setBackground(background);
+        cell.setForeground(foreground);
+        
+      } catch(Exception e) {
+        
+      } finally {
+        
+        threadLock.unlock();
+        repaint();
+        return cell;
+        
+      } 
     } 
     
     boolean breakPointGesetzt = (boolean)this.getModel().getValueAt(row, 0);
@@ -53,28 +73,41 @@ public class MyTable extends JTable {
     
     if (breakPointGesetzt && (actualProgrammCounter == programmCounterValue)) {
       
-      cell.setBackground(Color.GREEN);
-      cell.setForeground(Color.BLACK);
+      background = Color.GREEN;
+      foreground = Color.BLACK;
       
     } else if (breakPointGesetzt && (actualProgrammCounter != programmCounterValue)){
       
-      cell.setBackground(Color.RED);
-      cell.setForeground(Color.WHITE);
+      background = Color.RED;
+      foreground = Color.WHITE;
       
     } else if (!breakPointGesetzt && (actualProgrammCounter == programmCounterValue)) {
       
-      cell.setBackground(Color.YELLOW);
-      cell.setForeground(Color.BLACK);
+      background = Color.YELLOW;
+      foreground = Color.BLACK;
       
     } else {
       
-      cell.setBackground(Color.WHITE);
-      cell.setForeground(Color.BLACK);
+      background = Color.WHITE;
+      foreground = Color.BLACK;
+      
+    }
+    
+    threadLock.lock();
+    
+    try {
+      
+      cell.setBackground(background);
+      cell.setForeground(foreground);
+      
+    } catch(Exception e) {
+      
+    } finally {
+      
+      threadLock.unlock();
+      repaint();
+      return cell;
       
     } 
-    
-    repaint();
-    return cell;
-    
   }
 }
