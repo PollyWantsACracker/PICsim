@@ -37,6 +37,31 @@ public class MainFrame extends JFrame {
   private JLabel jLabelStatusValue;
   private JLabel jLabelLaufzeit;
   private JLabel jLabelLaufzeitEinheit;
+  
+  private JLabel jLabelRABit;
+  private JLabel jLabelRA7;
+  private JLabel jLabelRA6;
+  private JLabel jLabelRA5;
+  private JLabel jLabelRA4;
+  private JLabel jLabelRA3;
+  private JLabel jLabelRA2;
+  private JLabel jLabelRA1;
+  private JLabel jLabelRA0;
+  private JLabel jLabelTrisA;
+  private JLabel jLabelRAValue;
+  
+  private JLabel jLabelRBBit;
+  private JLabel jLabelRB7;
+  private JLabel jLabelRB6;
+  private JLabel jLabelRB5;
+  private JLabel jLabelRB4;
+  private JLabel jLabelRB3;
+  private JLabel jLabelRB2;
+  private JLabel jLabelRB1;
+  private JLabel jLabelRB0;
+  private JLabel jLabelTrisB;
+  private JLabel jLabelRBValue;
+  
   private JComboBox jComboBoxQuarzFrequenzen;
   
   private JMenuBar jMenuBar;
@@ -53,11 +78,48 @@ public class MainFrame extends JFrame {
   private JPanel jPanelSpecialFunctions;
   private JPanel jPanelLaufzeit;
   private JPanel jPanelQuarzfrequenz;
+  private JPanel jPanelRA;
+  private JPanel jPanelRB;
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
   private JButton jButtonOneStep = new JButton();
   private JButton jButtonStop = new JButton();
   private JButton jButtonZurücksetzen = new JButton();
+  
+  private JButton jButtonTrisA7 = new JButton();
+  private JButton jButtonTrisA6 = new JButton();
+  private JButton jButtonTrisA5 = new JButton();
+  private JButton jButtonTrisA4 = new JButton();
+  private JButton jButtonTrisA3 = new JButton();
+  private JButton jButtonTrisA2 = new JButton();
+  private JButton jButtonTrisA1 = new JButton();
+  private JButton jButtonTrisA0 = new JButton();
+  private JButton jButtonRABit7 = new JButton();
+  private JButton jButtonRABit6 = new JButton();
+  private JButton jButtonRABit5 = new JButton();
+  private JButton jButtonRABit4 = new JButton();
+  private JButton jButtonRABit3 = new JButton();
+  private JButton jButtonRABit2 = new JButton();
+  private JButton jButtonRABit1 = new JButton();
+  private JButton jButtonRABit0 = new JButton();
+  
+  private JButton jButtonTrisB7 = new JButton();
+  private JButton jButtonTrisB6 = new JButton();
+  private JButton jButtonTrisB5 = new JButton();
+  private JButton jButtonTrisB4 = new JButton();
+  private JButton jButtonTrisB3 = new JButton();
+  private JButton jButtonTrisB2 = new JButton();
+  private JButton jButtonTrisB1 = new JButton();
+  private JButton jButtonTrisB0 = new JButton();
+  private JButton jButtonRBBit7 = new JButton();
+  private JButton jButtonRBBit6 = new JButton();
+  private JButton jButtonRBBit5 = new JButton();
+  private JButton jButtonRBBit4 = new JButton();
+  private JButton jButtonRBBit3 = new JButton();
+  private JButton jButtonRBBit2 = new JButton();
+  private JButton jButtonRBBit1 = new JButton();
+  private JButton jButtonRBBit0 = new JButton();
+  
   private JTable jTableSourceCode;
   
   private AbstractAction resetButtonPressed;
@@ -99,9 +161,662 @@ public class MainFrame extends JFrame {
     initLabels();
     initButtons();
     initDataStorage();
+    initRegisters();
     
     
     setVisible(true);
+    
+  }
+  
+  private void initRegisters() {
+    
+    jPanelRA = new JPanel();
+    jPanelRA.setBounds(307, 315, 200, 107);
+    jPanelRA.setBorder(BorderFactory.createTitledBorder("Register A"));
+    getContentPane().add(jPanelRA);
+    
+    jLabelRABit = new JLabel();
+    jLabelRABit.setPreferredSize(new Dimension(25, 15));
+    jLabelRABit.setText("Bit");
+    jPanelRA.add(jLabelRABit);
+    
+    jLabelRA7 = new JLabel();
+    jLabelRA7.setPreferredSize(new Dimension(15, 15));
+    jLabelRA7.setText("7");
+    jLabelRA7.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA7);
+    
+    jLabelRA6 = new JLabel();
+    jLabelRA6.setPreferredSize(new Dimension(15, 15));
+    jLabelRA6.setText("6");
+    jLabelRA6.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA6);
+    
+    jLabelRA5 = new JLabel();
+    jLabelRA5.setPreferredSize(new Dimension(15, 15));
+    jLabelRA5.setText("5");
+    jLabelRA5.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA5);
+    
+    jLabelRA4 = new JLabel();
+    jLabelRA4.setPreferredSize(new Dimension(15, 15));
+    jLabelRA4.setText("4");
+    jLabelRA4.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA4);
+    
+    jLabelRA3 = new JLabel();
+    jLabelRA3.setPreferredSize(new Dimension(15, 15));
+    jLabelRA3.setText("3");
+    jLabelRA3.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA3);
+    
+    jLabelRA2 = new JLabel();
+    jLabelRA2.setPreferredSize(new Dimension(15, 15));
+    jLabelRA2.setText("2");
+    jLabelRA2.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA2);
+    
+    jLabelRA1 = new JLabel();
+    jLabelRA1.setPreferredSize(new Dimension(15, 15));
+    jLabelRA1.setText("1");
+    jLabelRA1.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA1);
+    
+    jLabelRA0 = new JLabel();
+    jLabelRA0.setPreferredSize(new Dimension(15, 15));
+    jLabelRA0.setText("0");
+    jLabelRA0.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRA.add(jLabelRA0);
+    
+    jLabelTrisA = new JLabel();
+    jLabelTrisA.setPreferredSize(new Dimension(25, 10));
+    jLabelTrisA.setText("Tris");
+    jPanelRA.add(jLabelTrisA);
+    
+    jButtonTrisA7.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA7.setText("i");
+    jButtonTrisA7.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA7.setFocusable(false);
+    jButtonTrisA7.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA7_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA7);
+    
+    jButtonTrisA6.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA6.setText("i");
+    jButtonTrisA6.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA6.setFocusable(false);
+    jButtonTrisA6.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA6_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA6);
+    
+    jButtonTrisA5.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA5.setText("i");
+    jButtonTrisA5.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA5.setFocusable(false);
+    jButtonTrisA5.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA5_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA5);
+    
+    jButtonTrisA4.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA4.setText("i");
+    jButtonTrisA4.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA4.setFocusable(false);
+    jButtonTrisA4.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA4_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA4);
+    
+    jButtonTrisA3.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA3.setText("i");
+    jButtonTrisA3.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA3.setFocusable(false);
+    jButtonTrisA3.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA3_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA3);
+    
+    jButtonTrisA2.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA2.setText("i");
+    jButtonTrisA2.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA2.setFocusable(false);
+    jButtonTrisA2.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA2_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA2);
+    
+    jButtonTrisA1.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA1.setText("i");
+    jButtonTrisA1.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA1.setFocusable(false);
+    jButtonTrisA1.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA1_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA1);
+    
+    jButtonTrisA0.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisA0.setText("i");
+    jButtonTrisA0.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisA0.setFocusable(false);
+    jButtonTrisA0.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisA0_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonTrisA0);
+    
+    jLabelRAValue = new JLabel();
+    jLabelRAValue.setPreferredSize(new Dimension(25, 15));
+    jLabelRAValue.setText("0/1");
+    jPanelRA.add(jLabelRAValue);
+    
+    jButtonRABit7.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit7.setText("0");
+    jButtonRABit7.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit7.setFocusable(false);
+    jButtonRABit7.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit7_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit7);
+    
+    jButtonRABit6.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit6.setText("0");
+    jButtonRABit6.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit6.setFocusable(false);
+    jButtonRABit6.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit6_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit6);
+    
+    jButtonRABit5.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit5.setText("0");
+    jButtonRABit5.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit5.setFocusable(false);
+    jButtonRABit5.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit5_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit5);
+    
+    jButtonRABit4.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit4.setText("0");
+    jButtonRABit4.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit4.setFocusable(false);
+    jButtonRABit4.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit4_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit4);
+    
+    jButtonRABit3.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit3.setText("0");
+    jButtonRABit3.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit3.setFocusable(false);
+    jButtonRABit3.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit3_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit3);
+    
+    jButtonRABit2.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit2.setText("0");
+    jButtonRABit2.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit2.setFocusable(false);
+    jButtonRABit2.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit2_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit2);
+    
+    jButtonRABit1.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit1.setText("0");
+    jButtonRABit1.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit1.setFocusable(false);
+    jButtonRABit1.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit1_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit1);
+    
+    jButtonRABit0.setPreferredSize(new Dimension(15, 15));
+    jButtonRABit0.setText("0");
+    jButtonRABit0.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRABit0.setFocusable(false);
+    jButtonRABit0.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRABit0_ActionPerformed(evt);
+      }
+    });
+    jPanelRA.add(jButtonRABit0);
+    
+    jPanelRB = new JPanel();
+    jPanelRB.setBounds(307, 422, 200, 108);
+    jPanelRB.setBorder(BorderFactory.createTitledBorder("Register B"));
+    getContentPane().add(jPanelRB);
+    
+    jLabelRBBit = new JLabel();
+    jLabelRBBit.setPreferredSize(new Dimension(25, 15));
+    jLabelRBBit.setText("Bit");
+    jPanelRB.add(jLabelRBBit);
+    
+    jLabelRB7 = new JLabel();
+    jLabelRB7.setPreferredSize(new Dimension(15, 15));
+    jLabelRB7.setText("7");
+    jLabelRB7.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB7);
+    
+    jLabelRB6 = new JLabel();
+    jLabelRB6.setPreferredSize(new Dimension(15, 15));
+    jLabelRB6.setText("6");
+    jLabelRB6.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB6);
+    
+    jLabelRB5 = new JLabel();
+    jLabelRB5.setPreferredSize(new Dimension(15, 15));
+    jLabelRB5.setText("5");
+    jLabelRB5.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB5);
+    
+    jLabelRB4 = new JLabel();
+    jLabelRB4.setPreferredSize(new Dimension(15, 15));
+    jLabelRB4.setText("4");
+    jLabelRB4.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB4);
+    
+    jLabelRB3 = new JLabel();
+    jLabelRB3.setPreferredSize(new Dimension(15, 15));
+    jLabelRB3.setText("3");
+    jLabelRB3.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB3);
+    
+    jLabelRB2 = new JLabel();
+    jLabelRB2.setPreferredSize(new Dimension(15, 15));
+    jLabelRB2.setText("2");
+    jLabelRB2.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB2);
+    
+    jLabelRB1 = new JLabel();
+    jLabelRB1.setPreferredSize(new Dimension(15, 15));
+    jLabelRB1.setText("1");
+    jLabelRB1.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB1);
+    
+    jLabelRB0 = new JLabel();
+    jLabelRB0.setPreferredSize(new Dimension(15, 15));
+    jLabelRB0.setText("0");
+    jLabelRB0.setHorizontalAlignment(SwingConstants.CENTER);
+    jPanelRB.add(jLabelRB0);
+    
+    jLabelTrisB = new JLabel();
+    jLabelTrisB.setPreferredSize(new Dimension(25, 10));
+    jLabelTrisB.setText("Tris");
+    jPanelRB.add(jLabelTrisB);
+    
+    jButtonTrisB7.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB7.setText("i");
+    jButtonTrisB7.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB7.setFocusable(false);
+    jButtonTrisB7.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB7_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB7);
+    
+    jButtonTrisB6.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB6.setText("i");
+    jButtonTrisB6.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB6.setFocusable(false);
+    jButtonTrisB6.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB6_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB6);
+    
+    jButtonTrisB5.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB5.setText("i");
+    jButtonTrisB5.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB5.setFocusable(false);
+    jButtonTrisB5.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB5_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB5);
+    
+    jButtonTrisB4.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB4.setText("i");
+    jButtonTrisB4.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB4.setFocusable(false);
+    jButtonTrisB4.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB4_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB4);
+    
+    jButtonTrisB3.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB3.setText("i");
+    jButtonTrisB3.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB3.setFocusable(false);
+    jButtonTrisB3.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB3_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB3);
+    
+    jButtonTrisB2.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB2.setText("i");
+    jButtonTrisB2.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB2.setFocusable(false);
+    jButtonTrisB2.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB2_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB2);
+    
+    jButtonTrisB1.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB1.setText("i");
+    jButtonTrisB1.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB1.setFocusable(false);
+    jButtonTrisB1.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB1_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB1);
+    
+    jButtonTrisB0.setPreferredSize(new Dimension(15, 15));
+    jButtonTrisB0.setText("i");
+    jButtonTrisB0.setMargin(new Insets(1, 1, 1, 1));
+    jButtonTrisB0.setFocusable(false);
+    jButtonTrisB0.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonTrisB0_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonTrisB0);
+    
+    jLabelRBValue = new JLabel();
+    jLabelRBValue.setPreferredSize(new Dimension(25, 15));
+    jLabelRBValue.setText("0/1");
+    jPanelRB.add(jLabelRBValue);
+    
+    jButtonRBBit7.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit7.setText("0");
+    jButtonRBBit7.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit7.setFocusable(false);
+    jButtonRBBit7.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit7_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit7);
+    
+    jButtonRBBit6.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit6.setText("0");
+    jButtonRBBit6.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit6.setFocusable(false);
+    jButtonRBBit6.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit6_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit6);
+    
+    jButtonRBBit5.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit5.setText("0");
+    jButtonRBBit5.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit5.setFocusable(false);
+    jButtonRBBit5.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit5_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit5);
+    
+    jButtonRBBit4.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit4.setText("0");
+    jButtonRBBit4.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit4.setFocusable(false);
+    jButtonRBBit4.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit4_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit4);
+    
+    jButtonRBBit3.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit3.setText("0");
+    jButtonRBBit3.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit3.setFocusable(false);
+    jButtonRBBit3.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit3_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit3);
+    
+    jButtonRBBit2.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit2.setText("0");
+    jButtonRBBit2.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit2.setFocusable(false);
+    jButtonRBBit2.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit2_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit2);
+    
+    jButtonRBBit1.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit1.setText("0");
+    jButtonRBBit1.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit1.setFocusable(false);
+    jButtonRBBit1.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit1_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit1);
+    
+    jButtonRBBit0.setPreferredSize(new Dimension(15, 15));
+    jButtonRBBit0.setText("0");
+    jButtonRBBit0.setMargin(new Insets(1, 1, 1, 1));
+    jButtonRBBit0.setFocusable(false);
+    jButtonRBBit0.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonRBBit0_ActionPerformed(evt);
+      }
+    });
+    jPanelRB.add(jButtonRBBit0);
+    
+  }
+  
+  public void jButtonTrisB7_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB6_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB5_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB4_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB3_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB2_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB1_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisB0_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit7_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit6_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit5_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit4_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit3_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit2_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit1_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRBBit0_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit7_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit6_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit5_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit4_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit3_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit2_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit1_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonRABit0_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA7_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA6_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA5_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA4_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA3_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA2_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA1_ActionPerformed(ActionEvent evt) {
+    
+    
+  }
+  
+  public void jButtonTrisA0_ActionPerformed(ActionEvent evt) {
+    
     
   }
   
@@ -432,18 +1147,19 @@ public class MainFrame extends JFrame {
       
       steuerung.setRunning(false);
       steuerung.getDataStorage().resetDataStoragePowerOn();
+      automaticTableScroll();
       
     } 
     
     if (loadedFile && !steuerung.getRunning()) {
       
       steuerung.getDataStorage().resetDataStoragePowerOn();
+      automaticTableScroll();
       
     } 
     
     steuerung.setHold(false);
     updateElements();
-    automaticTableScroll();
     
   }
   
