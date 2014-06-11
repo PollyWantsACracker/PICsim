@@ -171,7 +171,7 @@ public class MainFrame extends JFrame {
   private void initRegisters() {
     
     jPanelRA = new JPanel();
-    jPanelRA.setBounds(307, 315, 200, 107);
+    jPanelRA.setBounds(307, 315, 200, 111); //107
     jPanelRA.setBorder(BorderFactory.createTitledBorder("Register A"));
     getContentPane().add(jPanelRA);
     
@@ -234,7 +234,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jLabelTrisA);
     
     jButtonTrisA7.setPreferredSize(new Dimension(15, 15));
-    jButtonTrisA7.setText("i");
+    jButtonTrisA7.setText("-");
     jButtonTrisA7.setMargin(new Insets(1, 1, 1, 1));
     jButtonTrisA7.setFocusable(false);
     jButtonTrisA7.addActionListener(new ActionListener() { 
@@ -245,7 +245,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jButtonTrisA7);
     
     jButtonTrisA6.setPreferredSize(new Dimension(15, 15));
-    jButtonTrisA6.setText("i");
+    jButtonTrisA6.setText("-");
     jButtonTrisA6.setMargin(new Insets(1, 1, 1, 1));
     jButtonTrisA6.setFocusable(false);
     jButtonTrisA6.addActionListener(new ActionListener() { 
@@ -256,7 +256,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jButtonTrisA6);
     
     jButtonTrisA5.setPreferredSize(new Dimension(15, 15));
-    jButtonTrisA5.setText("i");
+    jButtonTrisA5.setText("-");
     jButtonTrisA5.setMargin(new Insets(1, 1, 1, 1));
     jButtonTrisA5.setFocusable(false);
     jButtonTrisA5.addActionListener(new ActionListener() { 
@@ -327,7 +327,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jLabelRAValue);
     
     jButtonRABit7.setPreferredSize(new Dimension(15, 15));
-    jButtonRABit7.setText("0");
+    jButtonRABit7.setText("-");
     jButtonRABit7.setMargin(new Insets(1, 1, 1, 1));
     jButtonRABit7.setFocusable(false);
     jButtonRABit7.addActionListener(new ActionListener() { 
@@ -338,7 +338,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jButtonRABit7);
     
     jButtonRABit6.setPreferredSize(new Dimension(15, 15));
-    jButtonRABit6.setText("0");
+    jButtonRABit6.setText("-");
     jButtonRABit6.setMargin(new Insets(1, 1, 1, 1));
     jButtonRABit6.setFocusable(false);
     jButtonRABit6.addActionListener(new ActionListener() { 
@@ -349,7 +349,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jButtonRABit6);
     
     jButtonRABit5.setPreferredSize(new Dimension(15, 15));
-    jButtonRABit5.setText("0");
+    jButtonRABit5.setText("-");
     jButtonRABit5.setMargin(new Insets(1, 1, 1, 1));
     jButtonRABit5.setFocusable(false);
     jButtonRABit5.addActionListener(new ActionListener() { 
@@ -415,7 +415,7 @@ public class MainFrame extends JFrame {
     jPanelRA.add(jButtonRABit0);
     
     jPanelRB = new JPanel();
-    jPanelRB.setBounds(307, 422, 200, 108);
+    jPanelRB.setBounds(307, 426, 200, 112);
     jPanelRB.setBorder(BorderFactory.createTitledBorder("Register B"));
     getContentPane().add(jPanelRB);
     
@@ -662,82 +662,308 @@ public class MainFrame extends JFrame {
   
   public void jButtonTrisB7_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB7.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 128);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 128);
+        
+      } 
+      
+      updateElements();
+      
+    } 
   }
   
   public void jButtonTrisB6_ActionPerformed(ActionEvent evt) {
     
+    if (loadedFile) {
+      
+      if (jButtonTrisB6.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 64);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 64);
+        
+      } 
+      
+      updateElements();
+      
+    }
     
-  }
+  }  
+  
   
   public void jButtonTrisB5_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB5.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 32);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 32);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisB4_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB4.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 16);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 16);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisB3_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB3.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 8);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 8);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisB2_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB2.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 4);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 4);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisB1_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB1.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 2);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 2);
+        
+      } 
+      
+      updateElements();
+      
+    } 
   }
   
   public void jButtonTrisB0_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisB0.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) + 1);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(134, steuerung.getDataStorage().getValue(134) - 1);
+        
+      } 
+      
+      updateElements();
+      
+    }  
   }
   
   public void jButtonRBBit7_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit7.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 128);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 128);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit6_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit6.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 64);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 64);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit5_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit5.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 32);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 32);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit4_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit4.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 16);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 16);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit3_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit3.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 8);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 8);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit2_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit2.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 4);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 4);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit1_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit1.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 2);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 2);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRBBit0_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRBBit0.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) + 1);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(6, steuerung.getDataStorage().getValue(6) - 1);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRABit7_ActionPerformed(ActionEvent evt) {
@@ -757,27 +983,97 @@ public class MainFrame extends JFrame {
   
   public void jButtonRABit4_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRABit4.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) + 16);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) - 16);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRABit3_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRABit3.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) + 8);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) - 8);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRABit2_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRABit2.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) + 4);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) - 4);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRABit1_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRABit1.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) + 2);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) - 2);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonRABit0_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonRABit0.getText().equals("0")) {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) + 1);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(5, steuerung.getDataStorage().getValue(5) - 1);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisA7_ActionPerformed(ActionEvent evt) {
@@ -797,27 +1093,97 @@ public class MainFrame extends JFrame {
   
   public void jButtonTrisA4_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisA4.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) + 16);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) - 16);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisA3_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisA3.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) + 8);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) - 8);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisA2_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisA2.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) + 4);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) - 4);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisA1_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisA1.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) + 2);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) - 2);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   public void jButtonTrisA0_ActionPerformed(ActionEvent evt) {
     
-    
+    if (loadedFile) {
+      
+      if (jButtonTrisA0.getText().equals("o")) {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) + 1);
+        
+      } else {
+        
+        steuerung.getDataStorage().setValue(133, steuerung.getDataStorage().getValue(133) - 1);
+        
+      } 
+      
+      updateElements();
+      
+    }
   }
   
   private void initLabels() {
@@ -1072,6 +1438,275 @@ public class MainFrame extends JFrame {
     jScrollPaneSourceCode.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
     jScrollPaneSourceCode.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     getContentPane().add(jScrollPaneSourceCode);
+    
+  }
+  
+  private void updateRegister() {
+    
+    int registerA = steuerung.getDataStorage().getValue(5);
+    int registerB = steuerung.getDataStorage().getValue(6);
+    int trisA = steuerung.getDataStorage().getValue(133);
+    int trisB = steuerung.getDataStorage().getValue(134);
+    
+    if ((registerA & 0x10) == 16) {
+      
+      jButtonRABit4.setText("1");
+      
+    } else {
+      
+      jButtonRABit4.setText("0");
+      
+    }
+    
+    if ((registerA & 0x08) == 8) {
+      
+      jButtonRABit3.setText("1");
+      
+    } else {
+      
+      jButtonRABit3.setText("0");
+      
+    }
+    
+    if ((registerA & 0x04) == 4) {
+      
+      jButtonRABit2.setText("1");
+      
+    } else {
+      
+      jButtonRABit2.setText("0");
+      
+    }
+    
+    if ((registerA & 0x02) == 2) {
+      
+      jButtonRABit1.setText("1");
+      
+    } else {
+      
+      jButtonRABit1.setText("0");
+      
+    } 
+    
+    if ((registerA & 0x01) == 1) {
+      
+      jButtonRABit0.setText("1");
+      
+    } else {
+      
+      jButtonRABit0.setText("0");
+      
+    }
+    
+    if ((registerB & 0x80) == 128) {
+      
+      jButtonRBBit7.setText("1");
+      
+    } else {
+      
+      jButtonRBBit7.setText("0");
+      
+    }
+    
+    if ((registerB & 0x40) == 64) {
+      
+      jButtonRBBit6.setText("1");
+      
+    } else {
+      
+      jButtonRBBit6.setText("0");
+      
+    }
+    
+    if ((registerB & 0x20) == 32) {
+      
+      jButtonRBBit5.setText("1");
+      
+    } else {
+      
+      jButtonRBBit5.setText("0");
+      
+    }
+    
+    if ((registerB & 0x10) == 16) {
+      
+      jButtonRBBit4.setText("1");
+      
+    } else {
+      
+      jButtonRBBit4.setText("0");
+      
+    }
+    
+    if ((registerB & 0x08) == 8) {
+      
+      jButtonRBBit3.setText("1");
+      
+    } else {
+      
+      jButtonRBBit3.setText("0");
+      
+    }
+    
+    if ((registerB & 0x04) == 4) {
+      
+      jButtonRBBit2.setText("1");
+      
+    } else {
+      
+      jButtonRBBit2.setText("0");
+      
+    }
+    
+    if ((registerB & 0x02) == 2) {
+      
+      jButtonRBBit1.setText("1");
+      
+    } else {
+      
+      jButtonRBBit1.setText("0");
+      
+    }
+    
+    if ((registerB & 0x01) == 1) {
+      
+      jButtonRBBit0.setText("1");
+      
+    } else {
+      
+      jButtonRBBit0.setText("0");
+      
+    }
+    
+    if ((trisA & 0x10) == 16) {
+      
+      jButtonTrisA4.setText("i");
+      
+    } else {
+      
+      jButtonTrisA4.setText("o");
+      
+    }
+    
+    if ((trisA & 0x08) == 8) {
+      
+      jButtonTrisA3.setText("i");
+      
+    } else {
+      
+      jButtonTrisA3.setText("o");
+      
+    } 
+    
+    if ((trisA & 0x04) == 4) {
+      
+      jButtonTrisA2.setText("i");
+      
+    } else {
+      
+      jButtonTrisA2.setText("o");
+      
+    }
+    
+    if ((trisA & 0x02) == 2) {
+      
+      jButtonTrisA1.setText("i");
+      
+    } else {
+      
+      jButtonTrisA1.setText("o");
+      
+    }
+    
+    if ((trisA & 0x01) == 1) {
+      
+      jButtonTrisA0.setText("i");
+      
+    } else {
+      
+      jButtonTrisA0.setText("o");
+      
+    }
+    
+    if ((trisB & 0x80) == 128) {
+      
+      jButtonTrisB7.setText("i");
+      
+    } else {
+      
+      jButtonTrisB7.setText("o");
+      
+    }
+    
+    if ((trisB & 0x40) == 64) {
+      
+      jButtonTrisB6.setText("i");
+      
+    } else {
+      
+      jButtonTrisB6.setText("o");
+      
+    }
+    
+    if ((trisB & 0x20) == 32) {
+      
+      jButtonTrisB5.setText("i");
+      
+    } else {
+      
+      jButtonTrisB5.setText("o");
+      
+    }
+    
+    if ((trisB & 0x10) == 16) {
+      
+      jButtonTrisB4.setText("i");
+      
+    } else {
+      
+      jButtonTrisB4.setText("o");
+      
+    }
+    
+    if ((trisB & 0x08) == 8) {
+      
+      jButtonTrisB3.setText("i");
+      
+    } else {
+      
+      jButtonTrisB3.setText("o");
+      
+    }
+    
+    if ((trisB & 0x04) == 4) {
+      
+      jButtonTrisB2.setText("i");
+      
+    } else {
+      
+      jButtonTrisB2.setText("o");
+      
+    }
+    
+    if ((trisB & 0x02) == 2) {
+      
+      jButtonTrisB1.setText("i");
+      
+    } else {
+      
+      jButtonTrisB1.setText("o");
+      
+    }
+    
+    if ((trisB & 0x01) == 1) {
+      
+      jButtonTrisB0.setText("i");
+      
+    } else {
+      
+      jButtonTrisB0.setText("o");
+      
+    }
     
   }
   
@@ -1340,6 +1975,7 @@ public class MainFrame extends JFrame {
       jLabelStatusValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(3)));
       jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
       jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
+      updateRegister();
       
       for (int i = 0;i<256;i++) {
         
