@@ -78,6 +78,10 @@ public class Steuerung {
         
       } 
       
+    } else {
+      
+      hold = false;
+      
     } 
     
     Command c = parser.getCommand(actualProgrammCounter);
