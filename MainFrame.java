@@ -1,7 +1,6 @@
 /*
 Die Instanz dieser Klasse bildet das Hauptfenster der Anwendung.
 */
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,6 +13,8 @@ import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.concurrent.locks.*;
+import java.util.Enumeration;
+import gnu.io.CommPortIdentifier;
 
 public class MainFrame extends JFrame {
   
@@ -26,6 +27,7 @@ public class MainFrame extends JFrame {
   private String[] columnHeaders;
   private Object[][] tableData;
   private String[] quarzFrequenzen;
+  private String[] comPorts;
   
   private JLabel jLabelWRegister;
   private JLabel jLabelWRegisterValue;
@@ -62,6 +64,10 @@ public class MainFrame extends JFrame {
   private JLabel jLabelTrisB;
   private JLabel jLabelRBValue;
   
+  private JLabel jLabelComPorts;
+  private JLabel jLabelHStatus;
+  
+  private JComboBox jComboBoxComPorts;
   private JComboBox jComboBoxQuarzFrequenzen;
   
   private JMenuBar jMenuBar;
@@ -80,11 +86,16 @@ public class MainFrame extends JFrame {
   private JPanel jPanelQuarzfrequenz;
   private JPanel jPanelRA;
   private JPanel jPanelRB;
+  private JPanel jPanelHardwareansteuerung;
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
   private JButton jButtonOneStep = new JButton();
   private JButton jButtonStop = new JButton();
   private JButton jButtonZurücksetzen = new JButton();
+  private JButton jButtonScannComPorts = new JButton();
+  private JButton jButtonConnect = new JButton();
+  
+  private JTextField jTextFieldStatus;
   
   private JButton jButtonTrisA7 = new JButton();
   private JButton jButtonTrisA6 = new JButton();
@@ -1419,7 +1430,122 @@ public class MainFrame extends JFrame {
     jComboBoxQuarzFrequenzen.setSelectedItem("4000000");
     jPanelQuarzfrequenz.add(jComboBoxQuarzFrequenzen);
     
-    jScrollPaneDataStorage.setViewportView(jPanelDataStorage);  
+    jScrollPaneDataStorage.setViewportView(jPanelDataStorage);
+    
+    
+    
+    jPanelHardwareansteuerung = new JPanel();
+    jPanelHardwareansteuerung.setBounds(507, 315, 275, 88);
+    jPanelHardwareansteuerung.setBorder(BorderFactory.createTitledBorder("Hardwareansteuerung"));    
+    getContentPane().add(jPanelHardwareansteuerung);
+    
+    jLabelComPorts = new JLabel();
+    jLabelComPorts.setPreferredSize(new Dimension(60, 10));
+    jLabelComPorts.setText("ComPorts:");
+    jPanelHardwareansteuerung.add(jLabelComPorts);
+    
+    jComboBoxComPorts = new JComboBox();
+    jComboBoxComPorts.setPreferredSize(new Dimension(80, 20));
+    jPanelHardwareansteuerung.add(jComboBoxComPorts);
+    
+    jButtonScannComPorts.setPreferredSize(new Dimension(100, 20));
+    jButtonScannComPorts.setText("Scann");
+    
+    jButtonScannComPorts.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonScannComPorts_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelHardwareansteuerung.add(jButtonScannComPorts);
+    
+    jLabelHStatus = new JLabel();
+    jLabelHStatus.setPreferredSize(new Dimension(40, 10));
+    jLabelHStatus.setText("Status:");
+    jPanelHardwareansteuerung.add(jLabelHStatus);
+    
+    jTextFieldStatus = new JTextField();
+    jTextFieldStatus.setPreferredSize(new Dimension(100, 20));
+    jTextFieldStatus.setForeground(Color.RED);
+    jTextFieldStatus.setText("disconnected");
+    jTextFieldStatus.setHorizontalAlignment(SwingConstants.CENTER);
+    jTextFieldStatus.setFocusable(false);
+    jPanelHardwareansteuerung.add(jTextFieldStatus);
+    
+    jButtonConnect.setPreferredSize(new Dimension(100, 20));
+    jButtonConnect.setText("Connect");
+    
+    jButtonConnect.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent evt) { 
+        jButtonConnect_ActionPerformed(evt);
+      }
+    });
+    
+    jPanelHardwareansteuerung.add(jButtonConnect);
+    
+  }
+  
+  private void searchForComPorts() {
+    
+    int size = 0;
+    int zähler = 0;
+    
+    Enumeration portIdentifiers = CommPortIdentifier.getPortIdentifiers();
+    
+    if (portIdentifiers != null) {
+      
+      while (portIdentifiers.hasMoreElements()) {
+        
+        CommPortIdentifier pid = (CommPortIdentifier) portIdentifiers.nextElement();
+        
+        if (pid.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+          
+          size++;
+          
+        }
+      }
+      
+    } else {
+      
+      
+    }
+    
+    comPorts = new String[size];
+    
+    
+    portIdentifiers = CommPortIdentifier.getPortIdentifiers();
+    
+    if (portIdentifiers != null) {
+      
+      while (portIdentifiers.hasMoreElements()) {
+        
+        CommPortIdentifier pid = (CommPortIdentifier) portIdentifiers.nextElement();
+        
+        if (pid.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+          
+          comPorts[zähler] = pid.getName();
+          zähler++;
+          
+        }
+      }
+      
+    } else {
+      
+      
+    }
+    
+    jComboBoxComPorts.setModel(new DefaultComboBoxModel(comPorts));
+    
+  }
+  
+  
+  public void jButtonScannComPorts_ActionPerformed(ActionEvent evt) {
+    
+    searchForComPorts();
+    
+  }
+  
+  public void jButtonConnect_ActionPerformed(ActionEvent evt) {
     
   }
   

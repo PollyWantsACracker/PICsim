@@ -5,9 +5,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
-public class Serial {
+public class Hardwareansteuerung {
   
   private CommPortIdentifier portId;
   private SerialPort port;
@@ -16,53 +15,32 @@ public class Serial {
   private char CR = '\r';
   private char LF = '\n';
   
-  private PicSimModel model;
+  private DataStorage dataStorage;
   
-  public PicSimSerialController(PicSimModel model) {
-      this.model = model;
+  public Hardwareansteuerung(DataStorage aDataStorage) {
+    
+    dataStorage = aDataStorage;
+    
   }
   
-  // Startpunkt für die Verbindung
   public boolean open(String comportUsed) {
-    System.out.println("open serial");
+    
     try {
       
-      Enumeration portList;
-      String defaultPort;
-      // Differenzierung nach Betriebssystem
-      String osname = System.getProperty("os.name", "").toLowerCase();
-      if (osname.startsWith("windows")) {
-        
-        // windows
-        defaultPort = "COM5";
-        
-      } else if (osname.startsWith("linux")) {
-        
-        // linux
-        defaultPort = "/dev/ttyS0";
-        
-      } else if (osname.startsWith("mac")) {
-        
-        // mac
-        defaultPort = "/dev/tty.usbserial-FTH92HF9";
-        
-      } else {
-        
-        System.out.println("Sorry, your operating system is not supported");
-        
-      }
+      Enumeration portList = CommPortIdentifier.getPortIdentifiers();
       
-      portList = CommPortIdentifier.getPortIdentifiers();
       while (portList.hasMoreElements()) {
+        
         portId = (CommPortIdentifier) portList.nextElement();
+        
         if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-             
+          
           if (portId.getName().equals(comportUsed)) {
             System.out.println("Found port: " + comportUsed);
             System.out.println(portId.getName());
             break;
           }
-            
+          
         }
       }
       
@@ -88,7 +66,7 @@ public class Serial {
       System.out.println("Close that application and re-run this application");
       return false;
     }
-      
+    
   }
   
   public void sendRS232() throws Exception {
