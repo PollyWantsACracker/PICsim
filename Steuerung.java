@@ -8,10 +8,13 @@ public class Steuerung {
   private DataStorage dataStorage;
   private WRegister wRegister;
   private Stack stack;
+  private Hardwareansteuerung hardwareansteuerung;
+  
   private double laufzeit;
   private int quarzFrequenz = 0;
   private boolean running;
   private boolean hold;
+  private int machineCycleCounter = 0;
   
   public Steuerung() {
     
@@ -21,11 +24,12 @@ public class Steuerung {
     hold = false;
     
     final Steuerung s = this;
-    dataStorage = new DataStorage();
+    dataStorage = new DataStorage(this);
     parser = new Parser(this);
     wRegister = new WRegister();
     stack = new Stack();
     
+    hardwareansteuerung = new Hardwareansteuerung(dataStorage);
     
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -33,6 +37,12 @@ public class Steuerung {
         mainFrame = new MainFrame("PIC16F84 Simulator", s);
       }
     });
+  }
+  
+  public Hardwareansteuerung getHardwareansteuerung() {
+    
+    return hardwareansteuerung;
+    
   }
   
   public void setHold(boolean aHold) {
@@ -99,6 +109,9 @@ public class Steuerung {
     
     laufzeit += (c.getMachineCycles() * 4) / ((mainFrame.getActualQuarzFrequence()) / 1000000.0);
     dataStorage.setProgrammCounter(newProgrammCounter);
+    machineCycleCounter += c.getMachineCycles();
+    
+    dataStorage.timer0(machineCycleCounter);
     
   }
   

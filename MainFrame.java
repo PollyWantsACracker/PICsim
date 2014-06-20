@@ -74,9 +74,11 @@ public class MainFrame extends JFrame {
   private JMenu jMenuFile;
   private JMenu jMenuInfo;
   private JMenu jMenuHelp;
+  private JMenu jMenuDoku;
   private JMenuItem jMenuItemFileOpen;
   private JMenuItem jMenuItemInfoView;
   private JMenuItem jMenuItemHelpView;
+  private JMenuItem jMenuItemDokuView;
   private JScrollPane jScrollPaneDataStorage;
   private JScrollPane jScrollPaneSourceCode;
   private JPanel jPanelDataStorage;
@@ -154,7 +156,8 @@ public class MainFrame extends JFrame {
     setResizable(true);
     Container cp = getContentPane();
     cp.setLayout(null);
-    this.setIconImage(Toolkit.getDefaultToolkit().getImage("Images/favicon.png"));
+    
+    this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("Images/favicon.png")).getImage());//Toolkit.getDefaultToolkit().getImage("Images/favicon.png"));
     
     loadedFile = false;
     
@@ -1440,8 +1443,8 @@ public class MainFrame extends JFrame {
     getContentPane().add(jPanelHardwareansteuerung);
     
     jLabelComPorts = new JLabel();
-    jLabelComPorts.setPreferredSize(new Dimension(60, 10));
-    jLabelComPorts.setText("ComPorts:");
+    jLabelComPorts.setPreferredSize(new Dimension(68, 20));
+    jLabelComPorts.setText("Verbindung:");
     jPanelHardwareansteuerung.add(jLabelComPorts);
     
     jComboBoxComPorts = new JComboBox();
@@ -1465,7 +1468,7 @@ public class MainFrame extends JFrame {
     jPanelHardwareansteuerung.add(jLabelHStatus);
     
     jTextFieldStatus = new JTextField();
-    jTextFieldStatus.setPreferredSize(new Dimension(100, 20));
+    jTextFieldStatus.setPreferredSize(new Dimension(108, 20));
     jTextFieldStatus.setForeground(Color.RED);
     jTextFieldStatus.setText("disconnected");
     jTextFieldStatus.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1541,11 +1544,80 @@ public class MainFrame extends JFrame {
   
   public void jButtonScannComPorts_ActionPerformed(ActionEvent evt) {
     
-    searchForComPorts();
+    if (loadedFile) {
+      
+      searchForComPorts();
+      
+    }
+    
     
   }
   
   public void jButtonConnect_ActionPerformed(ActionEvent evt) {
+    
+    if (jButtonConnect.getText().equals("disconnect")) {
+      
+      try {
+        
+        steuerung.getHardwareansteuerung().close();
+        jButtonScannComPorts.setEnabled(true);
+        jComboBoxComPorts.setEnabled(true);
+        jTextFieldStatus.setForeground(Color.RED);
+        jTextFieldStatus.setText("disconnected");
+        jButtonConnect.setText("connect");
+        return;
+        
+      } catch(Exception e) {
+        
+        System.out.println(e);
+        return;
+        
+      } finally {
+        
+      } // end of try
+      
+      
+      
+    } // end of if
+    
+    if (loadedFile) {
+      
+      boolean open = false;
+      
+      try {
+        
+        open = steuerung.getHardwareansteuerung().open(jComboBoxComPorts.getSelectedItem().toString());
+        
+      } catch(Exception e) {
+        
+        return;
+        
+      }         
+      
+      
+      
+      if (open) {
+        
+        try {
+          
+          steuerung.getHardwareansteuerung().sendRS232();
+          
+        } catch(Exception e) {
+          
+        } finally {
+          
+        } 
+        
+        
+        jButtonScannComPorts.setEnabled(false);
+        jComboBoxComPorts.setEnabled(false);
+        jTextFieldStatus.setForeground(Color.GREEN);
+        jTextFieldStatus.setText("connected");
+        jButtonConnect.setText("disconnect");
+        
+      } 
+      
+    } 
     
   }
   
@@ -1882,6 +1954,20 @@ public class MainFrame extends JFrame {
     jMenuHelp.add(jMenuItemHelpView);
     jMenuBar.add(jMenuHelp);
     
+    jMenuDoku = new JMenu();
+    jMenuDoku.setText("Dokumentation");
+    jMenuItemDokuView = new JMenuItem();
+    jMenuItemDokuView.setText("Dokumentation Anzeigen");
+    
+    jMenuItemDokuView.addActionListener(new ActionListener() {;
+      public void actionPerformed(ActionEvent evt) {
+        jMenuItemDokuViewActionPerformed(evt);
+      }
+    });
+    
+    jMenuDoku.add(jMenuItemDokuView);
+    jMenuBar.add(jMenuDoku);
+      
     setJMenuBar(jMenuBar);
     
   }
@@ -2119,6 +2205,12 @@ public class MainFrame extends JFrame {
     } 
   }
   
+  public JTextField getStatus() {
+    
+    return jTextFieldStatus;
+    
+  }
+  
   private void initColumns() {
     
     columnHeaders = new String[7];
@@ -2271,6 +2363,34 @@ public class MainFrame extends JFrame {
   private void jMenuItemInfoViewActionPerformed(ActionEvent evt) {                                                  
     
     JOptionPane.showMessageDialog(this, "Name:                    " + this.getTitle() + "\nMotivation:            Der Simulator ist ein Testat für die Vorlesung Rechnerarchitektur an der DHBW Karlsruhe\nBeschreibung:     Dieser Simulator liest .lst-Dateien ein und simmluiert den darin enthalten Assemblercode\nAutoren:                Christopher Heß und Alexander Burkhardt (TINF12B5)", "Info", JOptionPane.INFORMATION_MESSAGE); 
+    
+  }
+  
+  private void jMenuItemDokuViewActionPerformed(ActionEvent evt) {
+    
+    try {
+      
+      File pdfFile = new File("Dokumentation.pdf");
+      
+      if (pdfFile.exists()) {
+        
+        if (Desktop.isDesktopSupported()) {
+          
+          Desktop.getDesktop().open(pdfFile);
+          
+        }
+        
+      } else {
+        
+        JOptionPane.showMessageDialog(this, "Die Datei Dokumentation.pdf ist nicht vorhanden!", "Fehler", JOptionPane.ERROR_MESSAGE);
+        
+      }
+      
+    } catch(Exception ex) {
+      
+      ex.printStackTrace();
+      
+    }
     
   }
   

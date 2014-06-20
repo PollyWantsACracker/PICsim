@@ -19,7 +19,7 @@ class ExecutionWorker extends SwingWorker<Integer, Integer> {
       
       steuerung.executeOneCommand();
       mainFrame.updateElements();
-      Thread.sleep(50);
+      //Thread.sleep(50);
       mainFrame.automaticTableScroll();
       
     }

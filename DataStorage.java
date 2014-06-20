@@ -1,15 +1,20 @@
 import java.util.concurrent.locks.*;
+import java.util.ArrayList;
 
 public class DataStorage {
   
   private int[] dataStorage;
   private Lock threadLock;
+  private Steuerung steuerung;
+  private int taktCounterHL = 0;
+  private int taktCounterLH = 0;
   
-  public DataStorage() {
+  public DataStorage(Steuerung aSteuerung) {
     
     dataStorage = new int[256];
     initDataStorage();
     threadLock = new ReentrantLock();
+    steuerung = aSteuerung;
     
   }
   
@@ -38,6 +43,213 @@ public class DataStorage {
     
   }
   
+  private void proofTimer0(int t0ckiOld) {
+    
+    int x = 0;
+    
+    if ((dataStorage[0x81] & 32) == 32) { // Takt von RA4
+      
+      if ((dataStorage[0x81] & 16) == 16) { // high to low
+        
+        if (t0ckiOld - (dataStorage[5] & 16) == 16) {
+          
+          if ((dataStorage[0x81] & 8) == 8) { // ohne Vorteiler
+            
+            dataStorage[1] += 1;
+            
+            if (dataStorage[1] == 256) { // overflow
+              
+              dataStorage[1] = 0;
+              
+              if ((dataStorage[0xb] & 4) == 0 ) {
+                
+                dataStorage[0xb] += 4;
+                
+              } 
+            } 
+            
+          } else { // mit Vorteiler
+            
+            taktCounterHL++;
+            
+            if (taktCounterHL % ((int) Math.pow(2.0,(double) (dataStorage[0x81] & 7)) * 2 ) == 0) {
+              
+              dataStorage[1] += 1;
+              
+              if (dataStorage[1] == 256) { // overflow
+                
+                dataStorage[1] = 0;
+                
+                if ((dataStorage[0xb] & 4) == 0 ) {
+                  
+                  dataStorage[0xb] += 4;
+                  
+                } 
+              }
+              
+              taktCounterHL = 0;
+              
+            } 
+          } 
+        } 
+        
+      } else { // low to high
+        
+        if (t0ckiOld - (dataStorage[0x5] & 16) == -16) {
+          
+          if ((dataStorage[0x81] & 8) == 8) { // ohne Vorteiler
+            
+            dataStorage[1] += 1;
+            
+            if (dataStorage[1] == 256) { // overflow
+              
+              dataStorage[1] = 0;
+              
+              if ((dataStorage[0xb] & 4) == 0 ) {
+                
+                dataStorage[0xb] += 4;
+                
+              } 
+            }
+            
+          } else { // mit Vorteiler
+            
+            taktCounterLH++;
+            
+            if (taktCounterLH % ((int) Math.pow(2.0,(double) (dataStorage[0x81] & 7)) * 2 ) == 0) {
+              
+              dataStorage[1] += 1;
+              
+              if (dataStorage[1] == 256) { // overflow
+                
+                dataStorage[1] = 0;
+                
+                if ((dataStorage[0xb] & 4) == 0 ) {
+                  
+                  dataStorage[0xb] += 4;
+                  
+                } 
+              }
+              
+              taktCounterLH = 0;
+              
+            }
+            
+          } 
+        } 
+      }
+    }  
+  }
+  
+  public void timer0(int machineCyclesCounter) {
+    
+    if ((dataStorage[0x81] & 32) == 32) { // Takt von RA4
+      
+      return;
+      
+    } 
+    
+    if ((dataStorage[0x81] & 8) == 8) { // ohne Prescaler
+      
+      dataStorage[1] += 1;
+      
+      if (dataStorage[1] == 256) { // overflow
+        
+        dataStorage[1] = 0;
+        
+        if ((dataStorage[0xb] & 4) == 0 ) {
+          
+          dataStorage[0xb] += 4;
+          
+        } 
+      } 
+      
+    } else { // Prescaler
+      
+      if (machineCyclesCounter % ((int) Math.pow(2.0,(double) (dataStorage[0x81] & 7)) * 2 ) == 0) {
+        
+        dataStorage[1] += 1;
+        
+        if (dataStorage[1] == 256) { // overflow
+          
+          dataStorage[1] = 0;
+          
+          if ((dataStorage[0xb] & 4) == 0 ) {
+            
+            dataStorage[0xb] += 4;
+            
+          } 
+        }
+      } 
+      
+      /*
+      switch (dataStorage[0x81] & 7) {
+      
+      case 0: 
+      
+      if (machineCyclesCounter % 2 == 0) {
+      
+      dataStorage[1] += 1;
+      
+      } 
+      
+      break;
+      
+      case 1: 
+      
+      if (machineCyclesCounter % 4 == 0) {
+      
+      dataStorage[1] += 1;
+      
+      }
+      
+      break;
+      
+      case 2:
+      
+      if (machineCyclesCounter % 8 == 0) {
+      
+      dataStorage[1] += 1;
+      
+      }
+      
+      break;
+      
+      case 3:
+      
+      if (machineCyclesCounter % 16 == 0) {
+      
+      dataStorage[1] += 1;
+      
+      }
+      
+      break;
+      
+      case 4:
+      
+      if (machineCyclesCounter % 32 == 0) {
+      
+      dataStorage[1] += 1;
+      
+      }
+      
+      break;
+      
+      case 5:
+      
+      if (machineCyclesCounter %  == 0) {
+      
+      dataStorage[1] += 1;
+      
+      }
+      
+      default: 
+      
+      } // end of switch
+      */
+    } 
+  }
+  
   public void setProgrammCounter(int newProgrammCounter) {
     
     setValue(130, newProgrammCounter);
@@ -49,21 +261,46 @@ public class DataStorage {
     
     threadLock.lock();
     
+    int t0ckiOld = dataStorage[5] & 16;
+    
+    if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar
+      
+      dataStorage[131] = value;
+      
+    }
+    
+    if (index == 131) { // siehe oben
+      
+      dataStorage[3] = value;
+      
+    } 
+    
+    dataStorage[index] = value;
+    
     try {
       
-      if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar
-        
-        dataStorage[131] = value;
+      if (steuerung.getMainFrame().getStatus().getText().equals("connected") && (index == 5 || index == 6 || index == 0x85 || index == 0x86)) {
+        try {
+          
+          steuerung.getHardwareansteuerung().sendRS232();
+          ArrayList<Integer> answer = steuerung.getHardwareansteuerung().read();
+          int registerA = answer.get(0);
+          int registerB = answer.get(1);
+          
+          dataStorage[5] = registerA & dataStorage[0x85];
+          dataStorage[6] = registerB & dataStorage[0x86];
+          
+        } catch(Exception e) {
+          
+        } finally {
+          
+        } 
         
       }
       
-      if (index == 131) { // siehe oben
-        
-        dataStorage[3] = value;
-        
-      } 
       
-      dataStorage[index] = value;
+      proofTimer0(t0ckiOld);
+      
       
     } catch(Exception e) {
       
