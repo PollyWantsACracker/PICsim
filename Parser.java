@@ -356,7 +356,7 @@ public class Parser {
         
         case 9: //RETFIE
         machineCycles = 2;
-        // fehlt!
+        commandList.add(new CommandRetfie(programmCounterLine, machineCycles, steuerung.getDataStorage(), steuerung.getWRegister(), steuerung.getStack()));
         continue;
         
         case 8: //RETURN

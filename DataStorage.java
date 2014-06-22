@@ -45,6 +45,48 @@ public class DataStorage {
     
   }
   
+  private void proofRBInterrupt(int portBOld) {
+    
+    if ((portBOld & dataStorage[0x86]) != ((dataStorage[6] & 0xf0) & dataStorage[0x86])) {
+      
+      if ((dataStorage[0xb] & 8) == 8) {
+        
+        dataStorage[0xb] = (dataStorage[0xb] & 0xfe) + 1;
+        
+      } 
+    } 
+  }
+  
+  private void proofRb0Int(int rb0int) {
+    
+    if ((dataStorage[0x81] & 64) == 64) { // rising edge
+      
+      if (rb0int - (dataStorage[6] & 1) == -1) {
+        
+        if ((dataStorage[0xb] & 16) == 16) {
+          
+          dataStorage[0xb] = (dataStorage[0xb] & 0xfd) + 2;
+          
+        } 
+        
+      } 
+      
+    } else { // falling edge
+      
+      if (rb0int - (dataStorage[6] & 1) == 1) {
+        
+        if ((dataStorage[0xb] & 16) == 16) {
+          
+          dataStorage[0xb] = (dataStorage[0xb] & 0xfd) + 2;
+          
+        } 
+        
+      } 
+      
+    } 
+    
+  }
+  
   private void proofTimer0(int t0ckiOld) {
     
     if ((dataStorage[0x81] & 32) == 32) { // Takt von RA4
@@ -61,9 +103,9 @@ public class DataStorage {
               
               dataStorage[1] = 0;
               
-              if ((dataStorage[0xb] & 4) == 0 ) {
+              if ((dataStorage[0xb] & 32) == 32) {
                 
-                dataStorage[0xb] += 4;
+                dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
                 
               } 
             } 
@@ -80,9 +122,9 @@ public class DataStorage {
                 
                 dataStorage[1] = 0;
                 
-                if ((dataStorage[0xb] & 4) == 0 ) {
+                if ((dataStorage[0xb] & 32) == 32) {
                   
-                  dataStorage[0xb] += 4;
+                  dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
                   
                 } 
               }
@@ -105,9 +147,9 @@ public class DataStorage {
               
               dataStorage[1] = 0;
               
-              if ((dataStorage[0xb] & 4) == 0 ) {
+              if ((dataStorage[0xb] & 32) == 32) {
                 
-                dataStorage[0xb] += 4;
+                dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
                 
               } 
             }
@@ -124,9 +166,9 @@ public class DataStorage {
                 
                 dataStorage[1] = 0;
                 
-                if ((dataStorage[0xb] & 4) == 0 ) {
+                if ((dataStorage[0xb] & 32) == 32) {
                   
-                  dataStorage[0xb] += 4;
+                  dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
                   
                 } 
               }
@@ -173,9 +215,9 @@ public class DataStorage {
         
         dataStorage[1] = 0;
         
-        if ((dataStorage[0xb] & 4) == 0 ) {
+        if ((dataStorage[0xb] & 32) == 32) {
           
-          dataStorage[0xb] += 4;
+          dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
           
         } 
       } 
@@ -195,12 +237,13 @@ public class DataStorage {
             
             dataStorage[1] = 0;
             
-            if ((dataStorage[0xb] & 4) == 0 ) {
+            if ((dataStorage[0xb] & 32) == 32) {
               
-              dataStorage[0xb] += 4;
+              dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
               
             } 
           }
+          
         } else if ((machineCyclesCounter - 1) % preScaler == 0){
           
           dataStorage[1] += 1;
@@ -209,9 +252,9 @@ public class DataStorage {
             
             dataStorage[1] = 0;
             
-            if ((dataStorage[0xb] & 4) == 0 ) {
+            if ((dataStorage[0xb] & 32) == 32) {
               
-              dataStorage[0xb] += 4;
+              dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
               
             } 
           }
@@ -228,15 +271,43 @@ public class DataStorage {
             
             dataStorage[1] = 0;
             
-            if ((dataStorage[0xb] & 4) == 0 ) {
+            if ((dataStorage[0xb] & 32) == 32) {
               
-              dataStorage[0xb] += 4;
+              dataStorage[0xb] = (dataStorage[0xb] & 0xfb) + 4;
               
             } 
           }
         }
       }
     } 
+  }
+  
+  public void interrupts() {
+    
+    if ((dataStorage[0xb] & 128) == 128) {
+      
+      if ((dataStorage[0xb] & 32) == 32 && (dataStorage[0xb] & 4) == 4) {
+        
+        steuerung.getStack().addAddress(getProgrammCounter());
+        dataStorage[0xb] = dataStorage[0xb] & 0x7f;
+        setProgrammCounter(4);
+        
+      } else if ((dataStorage[0xb] & 16) == 16 && (dataStorage[0xb] & 2) == 2) {
+        
+        steuerung.getStack().addAddress(getProgrammCounter());
+        dataStorage[0xb] = dataStorage[0xb] & 0x7f;
+        setProgrammCounter(4);
+        
+      } else if ((dataStorage[0xb] & 8) == 8 && (dataStorage[0xb] & 1) == 1) {
+        
+        steuerung.getStack().addAddress(getProgrammCounter());
+        dataStorage[0xb] = dataStorage[0xb] & 0x7f;
+        setProgrammCounter(4);
+        
+      } 
+      
+    } 
+    
   }
   
   public void setProgrammCounter(int newProgrammCounter) {
@@ -251,6 +322,8 @@ public class DataStorage {
     threadLock.lock();
     
     int t0ckiOld = dataStorage[5] & 16;
+    int rb0int = dataStorage[6] & 1;
+    int portB = dataStorage[6] & 0xf0;
     
     if (index == 3) { // Statusregister ist über Adresse 03h (3) und Adresse 83h (131) erreichbar
       
@@ -271,7 +344,7 @@ public class DataStorage {
       inhibit = true;
       inhibitValue = 2; //* ((int) Math.pow(2.0,(double)(dataStorage[0x81] & 7)) * 2);
       
-    } // end of if
+    } 
     
     try {
       
@@ -294,6 +367,8 @@ public class DataStorage {
         
       }
       
+      proofRBInterrupt(portB);
+      proofRb0Int(rb0int);
       proofTimer0(t0ckiOld);
       
       

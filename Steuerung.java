@@ -115,7 +115,12 @@ public class Steuerung {
     
     dataStorage.timer0(oldMachineCycleCounter ,machineCycleCounter);
     
+
+    dataStorage.interrupts();
+      
+ 
   }
+  
   
   public void setMachineCycleCounter(int old, int newValue) {
     
