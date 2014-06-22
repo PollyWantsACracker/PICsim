@@ -15,6 +15,7 @@ public class Steuerung {
   private boolean running;
   private boolean hold;
   private int machineCycleCounter = 0;
+  private int oldMachineCycleCounter = 0;
   
   public Steuerung() {
     
@@ -46,9 +47,9 @@ public class Steuerung {
   }
   
   public void setHold(boolean aHold) {
-  
+    
     hold = aHold;
-  
+    
   }
   
   public void setQuarzFrequenz(int aQuarzFrequenz) {
@@ -109,9 +110,17 @@ public class Steuerung {
     
     laufzeit += (c.getMachineCycles() * 4) / ((mainFrame.getActualQuarzFrequence()) / 1000000.0);
     dataStorage.setProgrammCounter(newProgrammCounter);
+    oldMachineCycleCounter = machineCycleCounter;
     machineCycleCounter += c.getMachineCycles();
     
-    dataStorage.timer0(machineCycleCounter);
+    dataStorage.timer0(oldMachineCycleCounter ,machineCycleCounter);
+    
+  }
+  
+  public void setMachineCycleCounter(int old, int newValue) {
+    
+    machineCycleCounter = newValue;
+    oldMachineCycleCounter = old;
     
   }
   

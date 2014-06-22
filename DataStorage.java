@@ -8,6 +8,8 @@ public class DataStorage {
   private Steuerung steuerung;
   private int taktCounterHL = 0;
   private int taktCounterLH = 0;
+  private boolean inhibit = false;
+  private int inhibitValue = 0;
   
   public DataStorage(Steuerung aSteuerung) {
     
@@ -44,8 +46,6 @@ public class DataStorage {
   }
   
   private void proofTimer0(int t0ckiOld) {
-    
-    int x = 0;
     
     if ((dataStorage[0x81] & 32) == 32) { // Takt von RA4
       
@@ -141,12 +141,28 @@ public class DataStorage {
     }  
   }
   
-  public void timer0(int machineCyclesCounter) {
+  public void timer0(int oldMachineCycleCounter, int machineCyclesCounter) {
     
     if ((dataStorage[0x81] & 32) == 32) { // Takt von RA4
       
       return;
       
+    }
+    
+    if (inhibit) {
+      
+      inhibitValue -= (machineCyclesCounter - oldMachineCycleCounter);
+      
+      if (inhibitValue < 0) {
+        
+        inhibit = false;
+        
+      } else {
+        
+        steuerung.setMachineCycleCounter(oldMachineCycleCounter - 1, machineCyclesCounter - 1);
+        return;
+        
+      } 
     } 
     
     if ((dataStorage[0x81] & 8) == 8) { // ohne Prescaler
@@ -166,87 +182,60 @@ public class DataStorage {
       
     } else { // Prescaler
       
-      if (machineCyclesCounter % ((int) Math.pow(2.0,(double) (dataStorage[0x81] & 7)) * 2 ) == 0) {
+      int preScaler = ((int) Math.pow(2.0,(double)(dataStorage[0x81] & 7)) * 2);
+      
+      if (machineCyclesCounter - oldMachineCycleCounter == 2) { // gotos and so on...
         
-        dataStorage[1] += 1;
+        if (machineCyclesCounter % preScaler == 0) {
+          
+          steuerung.setMachineCycleCounter(0, 0);
+          dataStorage[1] += 1;
+          
+          if (dataStorage[1] == 256) { // overflow
+            
+            dataStorage[1] = 0;
+            
+            if ((dataStorage[0xb] & 4) == 0 ) {
+              
+              dataStorage[0xb] += 4;
+              
+            } 
+          }
+        } else if ((machineCyclesCounter - 1) % preScaler == 0){
+          
+          dataStorage[1] += 1;
+          
+          if (dataStorage[1] == 256) { // overflow
+            
+            dataStorage[1] = 0;
+            
+            if ((dataStorage[0xb] & 4) == 0 ) {
+              
+              dataStorage[0xb] += 4;
+              
+            } 
+          }
+        } 
         
-        if (dataStorage[1] == 256) { // overflow
+      } else {
+        
+        if (machineCyclesCounter % preScaler == 0) {
           
-          dataStorage[1] = 0;
+          steuerung.setMachineCycleCounter(0, 0);
+          dataStorage[1] += 1;
           
-          if ((dataStorage[0xb] & 4) == 0 ) {
+          if (dataStorage[1] == 256) { // overflow
             
-            dataStorage[0xb] += 4;
+            dataStorage[1] = 0;
             
-          } 
+            if ((dataStorage[0xb] & 4) == 0 ) {
+              
+              dataStorage[0xb] += 4;
+              
+            } 
+          }
         }
-      } 
-      
-      /*
-      switch (dataStorage[0x81] & 7) {
-      
-      case 0: 
-      
-      if (machineCyclesCounter % 2 == 0) {
-      
-      dataStorage[1] += 1;
-      
-      } 
-      
-      break;
-      
-      case 1: 
-      
-      if (machineCyclesCounter % 4 == 0) {
-      
-      dataStorage[1] += 1;
-      
       }
-      
-      break;
-      
-      case 2:
-      
-      if (machineCyclesCounter % 8 == 0) {
-      
-      dataStorage[1] += 1;
-      
-      }
-      
-      break;
-      
-      case 3:
-      
-      if (machineCyclesCounter % 16 == 0) {
-      
-      dataStorage[1] += 1;
-      
-      }
-      
-      break;
-      
-      case 4:
-      
-      if (machineCyclesCounter % 32 == 0) {
-      
-      dataStorage[1] += 1;
-      
-      }
-      
-      break;
-      
-      case 5:
-      
-      if (machineCyclesCounter %  == 0) {
-      
-      dataStorage[1] += 1;
-      
-      }
-      
-      default: 
-      
-      } // end of switch
-      */
     } 
   }
   
@@ -277,6 +266,13 @@ public class DataStorage {
     
     dataStorage[index] = value;
     
+    if (index == 1) {
+      
+      inhibit = true;
+      inhibitValue = 2; //* ((int) Math.pow(2.0,(double)(dataStorage[0x81] & 7)) * 2);
+      
+    } // end of if
+    
     try {
       
       if (steuerung.getMainFrame().getStatus().getText().equals("connected") && (index == 5 || index == 6 || index == 0x85 || index == 0x86)) {
@@ -297,7 +293,6 @@ public class DataStorage {
         } 
         
       }
-      
       
       proofTimer0(t0ckiOld);
       

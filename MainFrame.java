@@ -1967,7 +1967,7 @@ public class MainFrame extends JFrame {
     
     jMenuDoku.add(jMenuItemDokuView);
     jMenuBar.add(jMenuDoku);
-      
+    
     setJMenuBar(jMenuBar);
     
   }
@@ -1993,6 +1993,7 @@ public class MainFrame extends JFrame {
     if (loadedFile && steuerung.getRunning()) {
       
       steuerung.setRunning(false);
+      steuerung.setMachineCycleCounter(0, 0);
       steuerung.getDataStorage().resetDataStoragePowerOn();
       automaticTableScroll();
       
@@ -2000,6 +2001,7 @@ public class MainFrame extends JFrame {
     
     if (loadedFile && !steuerung.getRunning()) {
       
+      steuerung.setMachineCycleCounter(0, 0);
       steuerung.getDataStorage().resetDataStoragePowerOn();
       automaticTableScroll();
       

@@ -459,7 +459,7 @@ public class Parser {
       if (maskedValue == 0) { //NOP
         
         machineCycles = 1;
-        // fehlt!
+        commandList.add(new CommandNop(programmCounterLine,machineCycles, steuerung.getDataStorage(), steuerung.getWRegister()));
         continue;
         
       }
