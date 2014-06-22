@@ -1232,7 +1232,7 @@ public class MainFrame extends JFrame {
     jLabelPCL = new JLabel();
     jLabelPCL.setPreferredSize(new Dimension(26, 20));
     jLabelPCL.setHorizontalAlignment(SwingConstants.LEFT);
-    jLabelPCL.setText("PCL:");
+    jLabelPCL.setText("PC:");
     jPanelSpecialFunctions.add(jLabelPCL);
     
     jLabelPCLValue = new JLabel();
