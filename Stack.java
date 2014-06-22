@@ -30,6 +30,23 @@ public class Stack {
     }  
   }
   
+  public String toString() {
+    
+    String stackString = "From top of stack:\n";
+    int size = stack.size();
+    
+    
+    
+    for (int i = size; i > 0 ; i-- ) {
+      
+      stackString += Integer.toString(stack.get(i - 1), 16) + "\n";
+      
+    }
+    
+    return stackString; 
+    
+  }
+  
   public int getLastAddress() {
     
     int address = 0;

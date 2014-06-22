@@ -67,6 +67,8 @@ public class MainFrame extends JFrame {
   private JLabel jLabelComPorts;
   private JLabel jLabelHStatus;
   
+  private JTextArea jTextAreaStack;
+  
   private JComboBox jComboBoxComPorts;
   private JComboBox jComboBoxQuarzFrequenzen;
   
@@ -89,6 +91,7 @@ public class MainFrame extends JFrame {
   private JPanel jPanelRA;
   private JPanel jPanelRB;
   private JPanel jPanelHardwareansteuerung;
+  private JPanel jPanelStack;
   private JButton jButtonReset = new JButton();
   private JButton jButtonStart = new JButton();
   private JButton jButtonOneStep = new JButton();
@@ -1486,6 +1489,16 @@ public class MainFrame extends JFrame {
     
     jPanelHardwareansteuerung.add(jButtonConnect);
     
+    jPanelStack = new JPanel();
+    jPanelStack.setBounds(507, 400, 275, 138);
+    jPanelStack.setBorder(BorderFactory.createTitledBorder("Stack"));    
+    getContentPane().add(jPanelStack);
+    
+    jTextAreaStack = new JTextArea();
+    jTextAreaStack.setPreferredSize(new Dimension(240, 100));
+    jTextAreaStack.setFocusable(false);
+    jPanelStack.add(jTextAreaStack);
+    
   }
   
   private void searchForComPorts() {
@@ -2088,6 +2101,12 @@ public class MainFrame extends JFrame {
     }
   }
   
+  private void updateStack() {
+    
+    jTextAreaStack.setText(steuerung.getStack().toString());
+    
+  }
+  
   public void mouseClicked_Action(MouseEvent e) {
     
     int count = e.getClickCount();
@@ -2190,6 +2209,7 @@ public class MainFrame extends JFrame {
       jLabelFSRValue.setText(Integer.toHexString(steuerung.getDataStorage().getValue(4)));
       jLabelLaufzeit.setText(Double.toString(steuerung.getLaufzeit()));
       updateRegister();
+      updateStack();
       
       for (int i = 0;i<256;i++) {
         
@@ -2198,6 +2218,7 @@ public class MainFrame extends JFrame {
       } 
       
     } catch(Exception e) {
+      
       
     } finally {
       
